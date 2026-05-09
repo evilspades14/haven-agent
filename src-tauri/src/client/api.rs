@@ -5,17 +5,35 @@ use reqwest::Client;
 pub struct WallHavenAPIClient {
     client: Client,
     base_url: String,
-    api_key: Option<String>
+    api_key: Option<String>,
 }
 
 impl WallHavenAPIClient {
-    pub fn build() -> Result<Self, Box<dyn Error>> {
+    pub fn search(&self) {
+
+    }
+}
+
+pub struct WallHavenAPIClientBuilder {
+    base_url: String,
+    api_key: Option<String>,
+}
+
+impl WallHavenAPIClientBuilder {
+    pub fn new(base_url: impl Into<String>, api_key: impl Into<Option<String>>) -> Self {
+        WallHavenAPIClientBuilder {
+            base_url: base_url.into(),
+            api_key: api_key.into(),
+        }
+    }
+
+    pub fn build(self) -> Result<WallHavenAPIClient, Box<dyn Error>> {
         let base_url = String::from("https://wallhaven.cc/api");
         let client = Client::builder().build()?;
-        Ok(Self {
+        Ok(WallHavenAPIClient {
             client,
             base_url,
-            api_key: None
+            api_key: self.api_key,
         })
     }
 
