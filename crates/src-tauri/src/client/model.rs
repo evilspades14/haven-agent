@@ -1,7 +1,9 @@
 use std::{ffi::os_str::Display, str::FromStr};
 
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
+use ts_rs::TS;
 
+#[derive(Deserialize, TS)]
 pub struct SearchParametersCategories {
     general: bool,
     anime: bool,
@@ -20,6 +22,7 @@ impl Serialize for SearchParametersCategories {
     }
 }
 
+#[derive(Deserialize, TS)]
 pub struct SearchParametersPurities {
     sfw: bool,
     sketchy: bool,
@@ -38,7 +41,7 @@ impl Serialize for SearchParametersPurities {
     }
 }
 
-#[derive(Serialize, Default)]
+#[derive(Serialize, Deserialize, Default, TS)]
 #[serde(rename_all = "snake_case")]
 pub enum SearchParametersSort {
     #[default]
@@ -50,7 +53,7 @@ pub enum SearchParametersSort {
     Toplist,
 }
 
-#[derive(Serialize, Default)]
+#[derive(Serialize, Deserialize, Default, TS)]
 #[serde(rename_all = "snake_case")]
 pub enum SearchParametersOrder {
     #[default]
@@ -58,7 +61,7 @@ pub enum SearchParametersOrder {
     Asc,
 }
 
-#[derive(Serialize, Default)]
+#[derive(Serialize, Deserialize, Default, TS)]
 pub enum SearchParametersTopRange {
     #[serde(rename = "1d")]
     OneDay,
@@ -77,6 +80,7 @@ pub enum SearchParametersTopRange {
     OneYear,
 }
 
+#[derive(TS, Deserialize)]
 pub struct Resolution {
     width: u32,
     height: u32,
@@ -91,6 +95,7 @@ impl Serialize for Resolution {
     }
 }
 
+#[derive(TS, Deserialize)]
 pub struct AspectRatio {
     width: u8,
     height: u8
@@ -115,6 +120,7 @@ pub enum SearchParametersColorError {
     InvalidHex(#[from] std::num::ParseIntError),
 }
 
+#[derive(TS, Deserialize)]
 pub struct SearchParametersColor {
     r: u8,
     g: u8,
@@ -156,8 +162,9 @@ impl Serialize for SearchParametersColor {
     }
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, Deserialize, TS)]
 #[serde(rename_all = "camelCase")]
+#[ts(export)]
 pub struct SearchParameters {
     q: Option<String>,
     categories: Option<SearchParametersCategories>,
@@ -170,5 +177,64 @@ pub struct SearchParameters {
     ratios: Option<Vec<AspectRatio>>,
     colors: Option<Vec<SearchParametersColor>>,
     page: Option<u128>,
-    seed: (),
+    seed: Option<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct Meta {
+    pub current_page: u32,
+    pub last_page: u32,
+    pub per_page: u32,
+    pub total: u32,
+    pub query: Option<Query>,
+    pub seed: Option<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(untagged)]
+pub enum Query {
+    Text(String),
+    Tag(TagQuery),
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct TagQuery {
+    pub id: u32,
+    pub tag: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct SearchResponse {
+    data: Vec<Wallpaper>,
+    meta: Meta
+}
+
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct Wallpaper {
+    pub id: String,
+    pub url: String,
+    pub short_url: String,
+    pub views: u64,
+    pub favorites: u64,
+    pub source: String,
+    pub purity: String,
+    pub category: String,
+    pub dimension_x: u32,
+    pub dimension_y: u32,
+    pub resolution: String,
+    pub ratio: String,
+    pub file_size: u64,
+    pub file_type: String,
+    pub created_at: String,
+    pub colors: Vec<String>,
+    pub path: String,
+    pub thumbs: Thumbs,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct Thumbs {
+    pub large: String,
+    pub original: String,
+    pub small: String,
 }
