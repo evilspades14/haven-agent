@@ -180,7 +180,7 @@ pub struct SearchParameters {
     seed: Option<String>,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, TS)]
 pub struct Meta {
     pub current_page: u32,
     pub last_page: u32,
@@ -190,27 +190,28 @@ pub struct Meta {
     pub seed: Option<String>,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, TS)]
 #[serde(untagged)]
 pub enum Query {
     Text(String),
     Tag(TagQuery),
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, TS)]
 pub struct TagQuery {
     pub id: u32,
     pub tag: String,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, TS)]
+#[ts(export)]
 pub struct SearchResponse {
     data: Vec<Wallpaper>,
     meta: Meta
 }
 
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, TS)]
 pub struct Wallpaper {
     pub id: String,
     pub url: String,
@@ -232,7 +233,7 @@ pub struct Wallpaper {
     pub thumbs: Thumbs,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, TS)]
 pub struct Thumbs {
     pub large: String,
     pub original: String,
