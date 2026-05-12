@@ -1,4 +1,3 @@
-use std::error::Error;
 
 use crate::error::CommandError;
 use tauri::{command, State};

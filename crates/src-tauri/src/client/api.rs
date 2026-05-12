@@ -1,6 +1,5 @@
-use std::error::Error;
 
-use reqwest::{Client, Response};
+use reqwest::Client;
 
 use crate::{
     client::model::{SearchParameters, SearchResponse},

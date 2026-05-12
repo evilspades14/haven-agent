@@ -1,4 +1,4 @@
-use std::{ffi::os_str::Display, str::FromStr};
+use std::str::FromStr;
 
 use serde::{Deserialize, Serialize};
 use ts_rs::TS;
