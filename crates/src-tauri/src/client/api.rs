@@ -18,6 +18,7 @@ impl WallHavenAPIClient {
             .send()
             .await?;
         let data = result.json::<SearchResponse>().await?;
+        log::debug!("{:?}", data);
         Ok(data)
     }
 

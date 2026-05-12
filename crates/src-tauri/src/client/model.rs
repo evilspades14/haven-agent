@@ -166,17 +166,26 @@ impl Serialize for SearchParametersColor {
 #[serde(rename_all = "camelCase")]
 #[ts(export)]
 pub struct SearchParameters {
+    #[serde(skip_serializing_if = "Option::is_none")]
     q: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     categories: Option<SearchParametersCategories>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     purity: Option<SearchParametersPurities>,
     sorting: SearchParametersSort,
     order: SearchParametersOrder,
     top_range: SearchParametersTopRange,
+    #[serde(skip_serializing_if = "Option::is_none")]
     atleast: Option<Resolution>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     resolutions: Option<Vec<Resolution>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     ratios: Option<Vec<AspectRatio>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     colors: Option<Vec<SearchParametersColor>>,
-    page: Option<u128>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    page: Option<u32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     seed: Option<String>,
 }
 

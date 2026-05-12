@@ -8,4 +8,4 @@ import type { SearchParametersPurities } from "./SearchParametersPurities";
 import type { SearchParametersSort } from "./SearchParametersSort";
 import type { SearchParametersTopRange } from "./SearchParametersTopRange";
 
-export type SearchParameters = { q: string | null, categories: SearchParametersCategories | null, purity: SearchParametersPurities | null, sorting: SearchParametersSort, order: SearchParametersOrder, topRange: SearchParametersTopRange, atleast: Resolution | null, resolutions: Array<Resolution> | null, ratios: Array<AspectRatio> | null, colors: Array<SearchParametersColor> | null, page: bigint | null, seed: string | null, };
+export type SearchParameters = { q: string | null, categories: SearchParametersCategories | null, purity: SearchParametersPurities | null, sorting: SearchParametersSort, order: SearchParametersOrder, topRange: SearchParametersTopRange, atleast: Resolution | null, resolutions: Array<Resolution> | null, ratios: Array<AspectRatio> | null, colors: Array<SearchParametersColor> | null, page: number | null, seed: string | null, };

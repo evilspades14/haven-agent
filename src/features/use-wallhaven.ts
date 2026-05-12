@@ -7,7 +7,7 @@ export const wallhavenQueryKeys = {
   query: (params: SearchParameters) => [...wallhavenQueryKeys.all(), params],
 };
 
-function useWallhavenSearch(params: SearchParameters) {
+export function useWallhavenSearch(params: SearchParameters) {
   return useQuery({
     queryKey: wallhavenQueryKeys.query(params),
     queryFn: () => WallhavenAPIService.search(params),
