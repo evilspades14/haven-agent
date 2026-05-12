@@ -1,6 +1,9 @@
 use std::error::Error;
 
-use crate::{client::api::{WallHavenAPIClient, WallHavenAPIClientBuilder}, error::SafeError};
+use crate::{
+    client::api::{WallHavenAPIClient, WallHavenAPIClientBuilder},
+    error::SafeError,
+};
 
 pub struct AppState {
     pub wallhaven_client: WallHavenAPIClient,

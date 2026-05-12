@@ -3,7 +3,7 @@ use std::{ffi::os_str::Display, str::FromStr};
 use serde::{Deserialize, Serialize};
 use ts_rs::TS;
 
-#[derive(Deserialize, TS)]
+#[derive(Deserialize, Debug, TS)]
 pub struct SearchParametersCategories {
     general: bool,
     anime: bool,
@@ -22,7 +22,7 @@ impl Serialize for SearchParametersCategories {
     }
 }
 
-#[derive(Deserialize, TS)]
+#[derive(Deserialize, Debug, TS)]
 pub struct SearchParametersPurities {
     sfw: bool,
     sketchy: bool,
@@ -41,7 +41,7 @@ impl Serialize for SearchParametersPurities {
     }
 }
 
-#[derive(Serialize, Deserialize, Default, TS)]
+#[derive(Serialize, Deserialize, Default, Debug, TS)]
 #[serde(rename_all = "snake_case")]
 pub enum SearchParametersSort {
     #[default]
@@ -53,7 +53,7 @@ pub enum SearchParametersSort {
     Toplist,
 }
 
-#[derive(Serialize, Deserialize, Default, TS)]
+#[derive(Serialize, Deserialize, Default, Debug, TS)]
 #[serde(rename_all = "snake_case")]
 pub enum SearchParametersOrder {
     #[default]
@@ -61,7 +61,7 @@ pub enum SearchParametersOrder {
     Asc,
 }
 
-#[derive(Serialize, Deserialize, Default, TS)]
+#[derive(Serialize, Deserialize, Default, Debug, TS)]
 pub enum SearchParametersTopRange {
     #[serde(rename = "1d")]
     OneDay,
@@ -80,7 +80,7 @@ pub enum SearchParametersTopRange {
     OneYear,
 }
 
-#[derive(TS, Deserialize)]
+#[derive(TS, Deserialize, Debug)]
 pub struct Resolution {
     width: u32,
     height: u32,
@@ -95,10 +95,10 @@ impl Serialize for Resolution {
     }
 }
 
-#[derive(TS, Deserialize)]
+#[derive(TS, Deserialize, Debug)]
 pub struct AspectRatio {
     width: u8,
-    height: u8
+    height: u8,
 }
 
 impl Serialize for AspectRatio {
@@ -120,18 +120,20 @@ pub enum SearchParametersColorError {
     InvalidHex(#[from] std::num::ParseIntError),
 }
 
-#[derive(TS, Deserialize)]
+#[derive(TS, Deserialize, Debug)]
 pub struct SearchParametersColor {
     r: u8,
     g: u8,
-    b: u8
+    b: u8,
 }
 
 impl FromStr for SearchParametersColor {
     type Err = SearchParametersColorError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let s = s.strip_prefix('#').ok_or(SearchParametersColorError::MissingPrefix)?;
+        let s = s
+            .strip_prefix('#')
+            .ok_or(SearchParametersColorError::MissingPrefix)?;
 
         let (r, g, b) = match s.len() {
             // shorthand: #RGB → #RRGGBB
@@ -157,12 +159,13 @@ impl FromStr for SearchParametersColor {
 impl Serialize for SearchParametersColor {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
-        S: serde::Serializer {
+        S: serde::Serializer,
+    {
         serializer.serialize_str(&format!("{:02X}{:02X}{:02X}", self.r, self.g, self.b))
     }
 }
 
-#[derive(Serialize, Deserialize, TS)]
+#[derive(Serialize, Deserialize, TS, Debug)]
 #[serde(rename_all = "camelCase")]
 #[ts(export)]
 pub struct SearchParameters {
@@ -172,9 +175,12 @@ pub struct SearchParameters {
     categories: Option<SearchParametersCategories>,
     #[serde(skip_serializing_if = "Option::is_none")]
     purity: Option<SearchParametersPurities>,
-    sorting: SearchParametersSort,
-    order: SearchParametersOrder,
-    top_range: SearchParametersTopRange,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    sorting: Option<SearchParametersSort>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    order: Option<SearchParametersOrder>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    top_range: Option<SearchParametersTopRange>,
     #[serde(skip_serializing_if = "Option::is_none")]
     atleast: Option<Resolution>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -216,9 +222,8 @@ pub struct TagQuery {
 #[ts(export)]
 pub struct SearchResponse {
     data: Vec<Wallpaper>,
-    meta: Meta
+    meta: Meta,
 }
-
 
 #[derive(Debug, Clone, Serialize, Deserialize, TS)]
 pub struct Wallpaper {

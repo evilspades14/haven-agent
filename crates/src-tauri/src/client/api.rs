@@ -2,7 +2,10 @@ use std::error::Error;
 
 use reqwest::{Client, Response};
 
-use crate::{client::model::{SearchParameters, SearchResponse}, error::SafeError};
+use crate::{
+    client::model::{SearchParameters, SearchResponse},
+    error::SafeError,
+};
 pub struct WallHavenAPIClient {
     client: Client,
     base_url: String,
@@ -12,13 +15,13 @@ pub struct WallHavenAPIClient {
 impl WallHavenAPIClient {
     pub async fn search(&self, params: SearchParameters) -> Result<SearchResponse, SafeError> {
         let path = "/wallpapers";
-        let result = self.client
+        let result = self
+            .client
             .get(format!("{}{}", self.base_url, path))
             .query(&params)
             .send()
             .await?;
         let data = result.json::<SearchResponse>().await?;
-        log::debug!("{:?}", data);
         Ok(data)
     }
 

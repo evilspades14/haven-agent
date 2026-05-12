@@ -12,5 +12,6 @@ export function useWallhavenSearch(params: SearchParameters) {
     queryKey: wallhavenQueryKeys.query(params),
     queryFn: () => WallhavenAPIService.search(params),
     placeholderData: keepPreviousData,
+    enabled: true
   });
 }

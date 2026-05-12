@@ -12,7 +12,7 @@ export const Route = createFileRoute("/")({
 
 function RouteComponent() {
   const { data, isLoading } = useWallhavenSearch(defaultSearchParamters())
-
+  console.log(data)
   return (
     <div className="flex flex-col gap-4">
       <Field orientation="horizontal">
