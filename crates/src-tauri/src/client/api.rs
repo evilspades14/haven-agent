@@ -1,5 +1,5 @@
-
 use reqwest::Client;
+use serde_json::Value;
 
 use crate::{
     client::model::{SearchParameters, SearchResponse},
@@ -12,12 +12,26 @@ pub struct WallHavenAPIClient {
 }
 
 impl WallHavenAPIClient {
-    pub async fn search(&self, params: SearchParameters) -> Result<SearchResponse, SafeError> {
-        let path = "/wallpapers";
+    pub async fn wallpaper_search(
+        &self,
+        params: SearchParameters,
+    ) -> Result<SearchResponse, SafeError> {
+        let path = "/v1/search";
         let result = self
             .client
             .get(format!("{}{}", self.base_url, path))
             .query(&params)
+            .send()
+            .await?;
+        let data = result.json::<SearchResponse>().await?;
+        Ok(data)
+    }
+
+    pub async fn wallpaper_info(&self, id: String) -> Result<SearchResponse, SafeError> {
+        let path = format!("{}/{}", "/w", id);
+        let result = self
+            .client
+            .get(format!("{}{}", self.base_url, path))
             .send()
             .await?;
         let data = result.json::<SearchResponse>().await?;
@@ -47,11 +61,10 @@ impl WallHavenAPIClientBuilder {
     }
 
     pub fn build(self) -> Result<WallHavenAPIClient, SafeError> {
-        let base_url = String::from("https://wallhaven.cc/api");
         let client = Client::builder().build()?;
         Ok(WallHavenAPIClient {
             client,
-            base_url,
+            base_url: self.base_url,
             api_key: self.api_key,
         })
     }

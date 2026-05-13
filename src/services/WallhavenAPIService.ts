@@ -3,8 +3,8 @@ import { SearchResponse } from "@/types/core/SearchResponse";
 import { invoke } from "@tauri-apps/api/core";
 
 const WallhavenAPIService = {
-  async search(params: SearchParameters) {
-    return await invoke<SearchResponse>("search", { params });
+  async wallpaperSearch(params: SearchParameters) {
+    return await invoke<SearchResponse>("wallpaper_search", { params });
   },
 };
 

@@ -1,32 +1,19 @@
-
-use crate::error::CommandError;
+use crate::{error::CommandError, state::state::AppState};
+use serde_json::Value;
 use tauri::{command, State};
 use tokio::sync::Mutex;
 
-use crate::{
-    client::model::{SearchParameters, SearchResponse},
-    state::AppState,
-};
+use crate::client::model::{SearchParameters, SearchResponse};
 
 #[command]
-pub async fn search(
+pub async fn wallpaper_search(
     state: State<'_, Mutex<AppState>>,
     params: SearchParameters,
 ) -> Result<SearchResponse, CommandError> {
     let state = state.lock().await;
     state
         .wallhaven_client
-        .search(params)
+        .wallpaper_search(params)
         .await
         .map_err(|e| e.into())
-}
-
-#[command]
-pub async fn update_api_key(
-    state: State<'_, Mutex<AppState>>,
-    api_key: Option<String>,
-) -> Result<(), CommandError> {
-    let mut state = state.lock().await;
-    state.wallhaven_client.set_api_key(api_key);
-    Ok(())
 }

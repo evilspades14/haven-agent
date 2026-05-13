@@ -10,7 +10,7 @@ export const wallhavenQueryKeys = {
 export function useWallhavenSearch(params: SearchParameters) {
   return useQuery({
     queryKey: wallhavenQueryKeys.query(params),
-    queryFn: () => WallhavenAPIService.search(params),
+    queryFn: () => WallhavenAPIService.wallpaperSearch(params),
     placeholderData: keepPreviousData,
     enabled: true
   });
