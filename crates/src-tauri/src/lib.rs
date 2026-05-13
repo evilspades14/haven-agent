@@ -1,12 +1,12 @@
 mod client;
+mod db;
 mod error;
 mod state;
-mod db;
 use client::*;
 use tauri::Manager;
 use tokio::sync::Mutex;
 
-use crate::state::state::AppState;
+use crate::{client::api::WallHavenAPIClientBuilder, db::init_db, state::state::AppState};
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -18,7 +18,14 @@ pub fn run() {
                 .build(),
         )
         .setup(|app| {
-            let state = AppState::new().expect("Failed to initialize app state!");
+            let builder = WallHavenAPIClientBuilder::new("https://wallhaven.cc/api", None);
+            let wallhaven_client = builder.build().expect("Failed to construct API Client!");
+            let pool =
+                tauri::async_runtime::block_on(init_db(app)).expect("Failed to intialize DB!");
+            let state = AppState {
+                db: pool,
+                wallhaven_client,
+            };
             app.manage(Mutex::new(state));
             Ok(())
         })

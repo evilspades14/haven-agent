@@ -1,5 +1,4 @@
 use reqwest::Client;
-use serde_json::Value;
 
 use crate::{
     client::model::{SearchParameters, SearchResponse},

@@ -1,5 +1,4 @@
 use crate::{error::CommandError, state::state::AppState};
-use serde_json::Value;
 use tauri::{command, State};
 use tokio::sync::Mutex;
 
