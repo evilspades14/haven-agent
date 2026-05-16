@@ -14,19 +14,19 @@ export const Route = createFileRoute("/")({
 function RouteComponent() {
   const { data, isLoading } = useWallhavenSearch({});
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4 overflow-hidden">
       <Field orientation="horizontal">
         <Input placeholder="Search..." />
-        <Button><MagnifyingGlassIcon/></Button>
+        <Button><MagnifyingGlassIcon /></Button>
       </Field>
-      <div className="flex flex-wrap gap-3 justify-center">
+      <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-3 justify-center overflow-y-auto">
         {isLoading
           ? Array.from({ length: 10 }).map((_, index) => (
-              <Skeleton className="h-36 w-full" key={index} />
-            ))
+            <Skeleton className="h-36 w-full" key={index} />
+          ))
           : data?.data.map((wallpaper) => (
-              <WallpaperCard wallpaper={wallpaper} />
-            ))}
+            <WallpaperCard wallpaper={wallpaper} />
+          ))}
       </div>
     </div>
   );
