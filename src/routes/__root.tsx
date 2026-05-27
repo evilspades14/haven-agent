@@ -21,8 +21,13 @@ function Root() {
       <NavigationMenu>
         <NavigationMenuList>
           <NavigationMenuItem>
-            <NavigationMenuLink>
+            <NavigationMenuLink asChild>
               <Link to="/">Home</Link>
+            </NavigationMenuLink>
+          </NavigationMenuItem>
+          <NavigationMenuItem>
+            <NavigationMenuLink asChild>
+              <Link to="/collection">Collection</Link>
             </NavigationMenuLink>
           </NavigationMenuItem>
         </NavigationMenuList>
