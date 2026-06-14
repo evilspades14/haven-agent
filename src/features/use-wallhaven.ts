@@ -1,8 +1,13 @@
 import WallhavenAPIService from "@/services/WallhavenAPIService";
 import { SearchParameters } from "@/types/core/SearchParameters";
+import { SearchResponse } from "@/types/core/SearchResponse";
 import { defaultSearchParamters } from "@/types/default/defaultSearchParameters";
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import { useReducer, useState } from "react";
+import {
+  keepPreviousData,
+  useInfiniteQuery,
+  useQuery,
+} from "@tanstack/react-query";
+import { useState } from "react";
 
 export const wallhavenQueryKeys = {
   all: () => ["search"],
@@ -10,15 +15,18 @@ export const wallhavenQueryKeys = {
 };
 
 export function useWallhavenSearch() {
-  const [q, setQuery] = useState<string | null>(null);
+  const [q, setQuery] = useState<string>("");
 
   const params = defaultSearchParamters();
 
-  const result = useQuery({
+  const result = useInfiniteQuery({
     queryKey: wallhavenQueryKeys.query({ ...params, q }),
-    queryFn: () => WallhavenAPIService.wallpaperSearch({ ...params, q }),
+    queryFn: ({ pageParam }) =>
+      WallhavenAPIService.wallpaperSearch({ ...params, q, page: pageParam }),
     placeholderData: keepPreviousData,
-    enabled: true,
+    getNextPageParam: (lastPage: SearchResponse) =>
+      lastPage.meta.current_page + 1,
+    initialPageParam: 1,
   });
 
   function search(value: string) {

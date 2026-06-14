@@ -1,3 +1,5 @@
+use std::time::Duration;
+
 use reqwest::Client;
 
 use crate::{
@@ -60,7 +62,7 @@ impl WallHavenAPIClientBuilder {
     }
 
     pub fn build(self) -> Result<WallHavenAPIClient, SafeError> {
-        let client = Client::builder().build()?;
+        let client = Client::builder().timeout(Duration::from_secs(20)).build()?;
         Ok(WallHavenAPIClient {
             client,
             base_url: self.base_url,
