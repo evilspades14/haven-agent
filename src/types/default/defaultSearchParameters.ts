@@ -2,7 +2,7 @@ import { SearchParameters } from "../core/SearchParameters";
 
 export function defaultSearchParamters(): SearchParameters {
     return {
-        q: "",
+        q: null,
         atleast: null,
         categories: null,
         colors: null,
@@ -12,7 +12,7 @@ export function defaultSearchParamters(): SearchParameters {
         ratios: null,
         resolutions: null,
         seed: null,
-        sorting: "relevance",
+        sorting: null,
         topRange: "3M"
     }
 }

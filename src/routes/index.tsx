@@ -1,19 +1,4 @@
 import { Button } from "@/components/ui/button";
-import { Field } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
-import { Skeleton } from "@/components/ui/skeleton";
-import { useWallhavenSearch } from "@/features/use-wallhaven";
-import { createFileRoute } from "@tanstack/react-router";
-import {
-  CubeIcon,
-  HandPeaceIcon,
-  ImageIcon,
-  MagnifyingGlassIcon,
-  SlidersHorizontalIcon,
-  UserIcon,
-} from "@phosphor-icons/react";
-import { WallpaperCard } from "@/components/wallpaper-card";
-import { Fragment, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -21,8 +6,12 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Toggle } from "@/components/ui/toggle";
-import { ToggleGroup } from "@/components/ui/toggle-group";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   Empty,
   EmptyDescription,
@@ -30,47 +19,131 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@/components/ui/empty";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { Field } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { WallpaperCard } from "@/components/wallpaper-card";
+import { WallpaperCardDetail } from "@/components/wallpaper-detail";
+import { useWallhavenSearch } from "@/features/use-wallhaven";
+import useWallhavenClientParamsStore from "@/hooks/wallhaven-params";
+import { SearchParametersCategories } from "@/types/core/SearchParametersCategories";
+import { SearchParametersSort } from "@/types/core/SearchParametersSort";
+import { Wallpaper } from "@/types/core/Wallpaper";
+import {
+  CubeIcon,
+  HandPeaceIcon,
+  ImageIcon,
+  MagnifyingGlassIcon,
+  SlidersHorizontalIcon,
+  SortAscendingIcon,
+  UserIcon,
+} from "@phosphor-icons/react";
+import { CheckCircleIcon } from "@phosphor-icons/react/dist/ssr";
+import { createFileRoute } from "@tanstack/react-router";
+import { AnimatePresence } from "motion/react";
+import { Fragment, useState } from "react";
 
 export const Route = createFileRoute("/")({
   component: RouteComponent,
 });
 
+function categoryValuestoCategoryParam(
+  values: Array<keyof SearchParametersCategories>,
+): SearchParametersCategories {
+  let categories = {} as SearchParametersCategories;
+  values.forEach((val) => {
+    categories[val] = true;
+  });
+  return categories;
+}
+
 function RouteComponent() {
-  const { data, isLoading, search } = useWallhavenSearch();
-  const [input, setInput] = useState("");
+  const params = useWallhavenClientParamsStore((state) => state.params);
+  const updateParams = useWallhavenClientParamsStore(
+    (state) => state.updateParams,
+  );
+  const { data, isLoading, isFetching, isPending } = useWallhavenSearch(params);
+
+  const [selectedWallpaper, setSelectedWallpaper] = useState<Wallpaper | null>(
+    null,
+  );
+  const [input, setInput] = useState(params.q ?? "");
   const [isOptionsDialogOpen, setIsOptionsDialogOpen] = useState(false);
 
   const allImages = data?.pages.flatMap((p) => p.data);
 
+  const sortOptions = [
+    { value: "date_added", label: "Date Added", disabled: false },
+    { value: "relevance", label: "Relevance", disabled: !params.q },
+    { value: "random", label: "Random", disabled: false },
+    { value: "views", label: "Views", disabled: false },
+    { value: "favorites", label: "Favorites", disabled: false },
+    { value: "toplist", label: "Toplist", disabled: false },
+  ];
+
   return (
-    <div className="flex flex-col gap-4 overflow-hidden">
+    <div className="flex-1 gap-4 overflow-hidden">
       <Field orientation="horizontal">
         <Input
           placeholder="Search..."
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && search(input)}
+          onKeyDown={(e) => e.key === "Enter" && updateParams({ q: input })}
         />
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button size={"icon"}>
+              <SortAscendingIcon />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            {sortOptions.map((opt) => (
+              <DropdownMenuItem
+                onClick={() =>
+                  updateParams({ sorting: opt.value as SearchParametersSort })
+                }
+                disabled={opt.disabled}
+              >
+                {opt.label}
+                {params.sorting === opt.value && (
+                  <CheckCircleIcon className="ml-auto" />
+                )}
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
 
         <Button size={"icon"} onClick={() => setIsOptionsDialogOpen(true)}>
-          <SlidersHorizontalIcon />
+          {!!params.sorting ? (
+            <SlidersHorizontalIcon />
+          ) : (
+            <SlidersHorizontalIcon />
+          )}
         </Button>
-        <Button size={"icon"} onClick={() => search(input)}>
+        <Button size={"icon"} onClick={() => updateParams({ q: input })}>
           <MagnifyingGlassIcon />
         </Button>
       </Field>
-      {isLoading ? (
+      {isFetching || isPending ? (
         Array.from({ length: 10 }).map((_, index) => (
           <Skeleton className="h-36 w-full mb-3" key={index} />
         ))
       ) : allImages && allImages.length > 0 ? (
-        <div className="p-4 columns-1 sm:columns-2 md:columns-3 lg:columns-4 xl:columns-5 gap-3 justify-center h-full overflow-x-hidden">
-          {allImages.map((wallpaper) => (
-            <Fragment key={wallpaper.id}>
-              <WallpaperCard wallpaper={wallpaper} />
-            </Fragment>
-          ))}
+        <div className="max-h-96 overflow-y-scroll scroll-fade">
+          <div className="p-4 columns-1 sm:columns-2 md:columns-3 lg:columns-4 xl:columns-5 gap-3 justify-center">
+            <AnimatePresence mode="popLayout">
+              {allImages.map((wallpaper) => (
+                <Fragment key={wallpaper.id}>
+                  <WallpaperCard
+                    wallpaper={wallpaper}
+                    onClick={() => setSelectedWallpaper(wallpaper)}
+                    className="mb-3"
+                  />
+                </Fragment>
+              ))}
+            </AnimatePresence>
+          </div>
         </div>
       ) : (
         <Empty>
@@ -86,22 +159,35 @@ function RouteComponent() {
         </Empty>
       )}
 
+      <WallpaperCardDetail
+        wallpaper={selectedWallpaper}
+        onOpenChange={(open) => !open && setSelectedWallpaper(null)}
+      />
+
       <Dialog open={isOptionsDialogOpen} onOpenChange={setIsOptionsDialogOpen}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Search Options</DialogTitle>
             <DialogDescription></DialogDescription>
           </DialogHeader>
-          <ToggleGroup type="multiple" className="flex items-center gap-3">
-            <Toggle value={"general"}>
+          <ToggleGroup
+            type="multiple"
+            value={Object.keys(params.categories ?? {}).filter((cat) => cat)}
+            onValueChange={(value: Array<keyof SearchParametersCategories>) =>
+              updateParams({
+                categories: categoryValuestoCategoryParam(value),
+              })
+            }
+          >
+            <ToggleGroupItem value={"general"} aria-label="General">
               <CubeIcon />
-            </Toggle>
-            <Toggle value={"people"}>
+            </ToggleGroupItem>
+            <ToggleGroupItem value={"people"} aria-label="People">
               <UserIcon />
-            </Toggle>
-            <Toggle value={"anime"}>
+            </ToggleGroupItem>
+            <ToggleGroupItem value={"anime"} aria-label="Anime">
               <HandPeaceIcon />
-            </Toggle>
+            </ToggleGroupItem>
           </ToggleGroup>
         </DialogContent>
       </Dialog>

@@ -17,7 +17,7 @@ export interface AppContext {
 
 function Root() {
   return (
-    <div className="flex-1 p-6 min-h-screen">
+    <div className="flex-1 h-dvh p-6 overflow-hidden">
       <NavigationMenu>
         <NavigationMenuList>
           <NavigationMenuItem>
@@ -32,7 +32,7 @@ function Root() {
           </NavigationMenuItem>
         </NavigationMenuList>
       </NavigationMenu>
-      <main>
+      <main className="relative min-h-0 min-w-0 flex-1">
         <Outlet />
       </main>
     </div>
