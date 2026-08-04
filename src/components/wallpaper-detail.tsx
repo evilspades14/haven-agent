@@ -28,14 +28,38 @@ export function WallpaperCardDetail({
 }: WallpaperCardDetailProps) {
   const isDesktop = useMediaQuery("(min-width: 768px)");
 
+  const content = (
+    <>
+      <WallpaperPanel wallpaper={wallpaper} />
+      <div className="overflow-y-scroll">
+        <div>Views: {wallpaper?.views}</div>
+        <div>Dimension X: {wallpaper?.dimension_x}</div>
+        <div>Dimension Y: {wallpaper?.dimension_y}</div>
+        <div className="flex w-full">
+          {wallpaper?.colors.map((color) => (
+            <div
+              style={{ backgroundColor: color }}
+              className={`bg-${color} h-4 w-full`}
+            ></div>
+          ))}
+        </div>
+        <div>Purity: {wallpaper?.purity}</div>
+        <div>File Size: {wallpaper?.file_size}</div>
+        <div>File Type: {wallpaper?.file_type}</div>
+      </div>
+    </>
+  );
+
   if (isDesktop) {
     return (
-      <Dialog open={!!wallpaper} onOpenChange={onOpenChange}>
-        <DialogContent>
+      <Dialog open={!!wallpaper} onOpenChange={onOpenChange} modal>
+        <DialogContent
+          className="min-w-2xl"
+        >
           <DialogHeader>
             <DialogTitle></DialogTitle>
           </DialogHeader>
-          <WallpaperPanel wallpaper={wallpaper}/>
+          <div className="grid grid-cols-2 gap-4 h-full">{content}</div>
         </DialogContent>
       </Dialog>
     );
@@ -44,12 +68,10 @@ export function WallpaperCardDetail({
   return (
     <Drawer open={!!wallpaper} onOpenChange={onOpenChange}>
       <DrawerContent>
-        <DrawerHeader className="text-left">
-          <DrawerTitle>Edit profile</DrawerTitle>
-          <DrawerDescription>
-            Make changes to your profile here. Click save when you&apos;re done.
-          </DrawerDescription>
+        <DrawerHeader>
+          <DrawerTitle></DrawerTitle>
         </DrawerHeader>
+        <div className="overflow-y-scroll">{content}</div>
       </DrawerContent>
     </Drawer>
   );
@@ -57,8 +79,11 @@ export function WallpaperCardDetail({
 
 function WallpaperPanel({ wallpaper }: { wallpaper: Wallpaper | null }) {
   return (
-    <ImageZoom zoomMargin={100} >
-      <img src={wallpaper?.path} decoding="sync" />
+    <ImageZoom zoomMargin={100} className=" rounded-md">
+      <img
+        src={wallpaper?.path}
+        className="h-fit w-fit aspect-square object-contain object-top rounded-md"
+      />
     </ImageZoom>
   );
 }
