@@ -41,8 +41,8 @@ import {
 } from "@phosphor-icons/react";
 import { CheckCircleIcon } from "@phosphor-icons/react/dist/ssr";
 import { createFileRoute } from "@tanstack/react-router";
-import { AnimatePresence } from "motion/react";
-import { Fragment, useState } from "react";
+import { AnimatePresence, useInView } from "motion/react";
+import { useEffect, useRef, useState } from "react";
 
 export const Route = createFileRoute("/")({
   component: RouteComponent,
@@ -63,7 +63,8 @@ function RouteComponent() {
   const updateParams = useWallhavenClientParamsStore(
     (state) => state.updateParams,
   );
-  const { data, isLoading, isFetching, isPending } = useWallhavenSearch(params);
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
+    useWallhavenSearch(params);
 
   const [selectedWallpaper, setSelectedWallpaper] = useState<Wallpaper | null>(
     null,
@@ -71,7 +72,6 @@ function RouteComponent() {
   const [input, setInput] = useState(params.q ?? "");
   const [isOptionsDialogOpen, setIsOptionsDialogOpen] = useState(false);
 
-  const allImages = data?.pages.flatMap((p) => p.data);
 
   const sortOptions = [
     { value: "date_added", label: "Date Added", disabled: false },
@@ -82,8 +82,21 @@ function RouteComponent() {
     { value: "toplist", label: "Toplist", disabled: false },
   ];
 
+  const sentinelRef = useRef(null);
+  const scrollRef = useRef(null);
+  const isInView = useInView(sentinelRef, {
+    root: scrollRef.current,
+    margin: "0px 0px 200px 0px",
+  });
+
+  useEffect(() => {
+    if (isInView && hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  }, [isInView, hasNextPage, isFetchingNextPage, fetchNextPage]);
+
   return (
-    <div className="flex-1 gap-4 overflow-hidden">
+    <div className="flex flex-col gap-4 overflow-hidden h-dvh">
       <Field orientation="horizontal">
         <Input
           placeholder="Search..."
@@ -125,24 +138,29 @@ function RouteComponent() {
           <MagnifyingGlassIcon />
         </Button>
       </Field>
-      {isFetching || isPending ? (
+      {!data ? (
         Array.from({ length: 10 }).map((_, index) => (
           <Skeleton className="h-36 w-full mb-3" key={index} />
         ))
-      ) : allImages && allImages.length > 0 ? (
-        <div className="max-h-96 overflow-y-scroll scroll-fade">
-          <div className="p-4 columns-1 sm:columns-2 md:columns-3 lg:columns-4 xl:columns-5 gap-3 justify-center">
-            <AnimatePresence mode="popLayout">
-              {allImages.map((wallpaper) => (
-                <Fragment key={wallpaper.id}>
-                  <WallpaperCard
-                    wallpaper={wallpaper}
-                    onClick={() => setSelectedWallpaper(wallpaper)}
-                    className="mb-3"
-                  />
-                </Fragment>
-              ))}
-            </AnimatePresence>
+      ) : data && data.pages.length > 0 ? (
+        <div
+          ref={scrollRef}
+          className="overflow-y-auto overscroll-contain scroll-fade min-h-0"
+        >
+          <div className="p-4 columns-2 md:columns-3 lg:columns-3 gap-3 justify-center">
+              <AnimatePresence mode="popLayout">
+                {data.pages.map((p) => {
+                  return p.data.map((wallpaper) => (
+                    <WallpaperCard
+                      wallpaper={wallpaper}
+                      onClick={() => setSelectedWallpaper(wallpaper)}
+                      className="mb-3"
+                      key={wallpaper.id}
+                    />
+                  ))
+                })}
+              </AnimatePresence>
+              <div ref={sentinelRef} className="h-1" />
           </div>
         </div>
       ) : (
