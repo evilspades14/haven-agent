@@ -26,6 +26,7 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { WallpaperCard } from "@/components/wallpaper-card";
 import { WallpaperCardDetail } from "@/components/wallpaper-detail";
 import { useWallhavenSearch } from "@/features/use-wallhaven";
+import useMasonryColumns from "@/hooks/masonry-columns";
 import useWallhavenClientParamsStore from "@/hooks/wallhaven-params";
 import { SearchParametersCategories } from "@/types/core/SearchParametersCategories";
 import { SearchParametersSort } from "@/types/core/SearchParametersSort";
@@ -42,6 +43,7 @@ import {
 import { CheckCircleIcon } from "@phosphor-icons/react/dist/ssr";
 import { createFileRoute } from "@tanstack/react-router";
 import { AnimatePresence, useInView } from "motion/react";
+import React from "react";
 import { useEffect, useRef, useState } from "react";
 
 export const Route = createFileRoute("/")({
@@ -72,7 +74,6 @@ function RouteComponent() {
   const [input, setInput] = useState(params.q ?? "");
   const [isOptionsDialogOpen, setIsOptionsDialogOpen] = useState(false);
 
-
   const sortOptions = [
     { value: "date_added", label: "Date Added", disabled: false },
     { value: "relevance", label: "Relevance", disabled: !params.q },
@@ -85,8 +86,8 @@ function RouteComponent() {
   const sentinelRef = useRef(null);
   const scrollRef = useRef(null);
   const isInView = useInView(sentinelRef, {
-    root: scrollRef.current,
-    margin: "0px 0px 200px 0px",
+    // root: scrollRef.current,
+    margin: "0px 0px 800px 0px",
   });
 
   useEffect(() => {
@@ -94,6 +95,8 @@ function RouteComponent() {
       fetchNextPage();
     }
   }, [isInView, hasNextPage, isFetchingNextPage, fetchNextPage]);
+
+  const columns = useMasonryColumns(data?.wallpapers ?? [], 3);
 
   return (
     <div className="flex flex-col gap-4 overflow-hidden h-dvh">
@@ -147,21 +150,23 @@ function RouteComponent() {
           ref={scrollRef}
           className="overflow-y-auto overscroll-contain scroll-fade min-h-0"
         >
-          <div className="p-4 columns-2 md:columns-3 lg:columns-3 gap-3 justify-center">
-              <AnimatePresence mode="popLayout">
-                {data.pages.map((p) => {
-                  return p.data.map((wallpaper) => (
+          <AnimatePresence mode="popLayout">
+            <div className="flex p-4 gap-3 justify-center">
+              {columns.map((col, i) => (
+                <div key={i} className="gap-4">
+                  {col.map((wallpaper) => (
                     <WallpaperCard
                       wallpaper={wallpaper}
                       onClick={() => setSelectedWallpaper(wallpaper)}
-                      className="mb-3"
                       key={wallpaper.id}
+                      className="mb-3"
                     />
-                  ))
-                })}
-              </AnimatePresence>
-              <div ref={sentinelRef} className="h-1" />
-          </div>
+                  ))}
+                </div>
+              ))}
+            </div>
+          </AnimatePresence>
+          <div ref={sentinelRef} />
         </div>
       ) : (
         <Empty>

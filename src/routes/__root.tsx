@@ -10,6 +10,7 @@ import {
   NavigationMenuLink,
   NavigationMenuList,
 } from "@/components/ui/navigation-menu";
+import { HouseSimpleIcon, StackIcon } from "@phosphor-icons/react";
 
 export interface AppContext {
   queryClient: QueryClient;
@@ -22,12 +23,12 @@ function Root() {
         <NavigationMenuList>
           <NavigationMenuItem>
             <NavigationMenuLink asChild>
-              <Link to="/">Home</Link>
+              <Link to="/"><HouseSimpleIcon/> Home</Link>
             </NavigationMenuLink>
           </NavigationMenuItem>
           <NavigationMenuItem>
             <NavigationMenuLink asChild>
-              <Link to="/collection">Collection</Link>
+              <Link to="/collection"><StackIcon/> Collection</Link>
             </NavigationMenuLink>
           </NavigationMenuItem>
         </NavigationMenuList>

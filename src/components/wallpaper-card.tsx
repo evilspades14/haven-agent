@@ -5,10 +5,14 @@ import { motion } from "motion/react";
 export type WallpaperCardProps = {
   wallpaper: Wallpaper;
   onClick?: () => void;
-  className?: string
+  className?: string;
 };
 
-export function WallpaperCard({ wallpaper, onClick, className }: WallpaperCardProps) {
+export function WallpaperCard({
+  wallpaper,
+  onClick,
+  className,
+}: WallpaperCardProps) {
   return (
     <motion.div
       layout
@@ -16,11 +20,16 @@ export function WallpaperCard({ wallpaper, onClick, className }: WallpaperCardPr
       onClick={onClick}
       className={cn(
         "rounded-md outline overflow-hidden select-none break-inside-avoid cursor-pointer",
-        className
+        className,
       )}
+      style={{
+        aspectRatio: `${wallpaper.dimension_x}/${wallpaper.dimension_y}`,
+      }}
     >
       <img
         src={wallpaper.thumbs.original}
+        alt={wallpaper.thumbs.small}
+        loading="lazy"
         decoding="async"
         className="select-none w-full"
       />

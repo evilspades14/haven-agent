@@ -16,6 +16,8 @@ import {
 import { useMediaQuery } from "@/hooks/media-query";
 import { Wallpaper } from "@/types/core/Wallpaper";
 import { ImageZoom } from "./kibo-ui/image-zoom";
+import { Button } from "./ui/button";
+import { ArrowSquareOutIcon, DownloadIcon } from "@phosphor-icons/react";
 
 export type WallpaperCardDetailProps = {
   wallpaper: Wallpaper | null;
@@ -33,8 +35,8 @@ export function WallpaperCardDetail({
       <WallpaperPanel wallpaper={wallpaper} />
       <div className="overflow-y-scroll">
         <div>Views: {wallpaper?.views}</div>
-        <div>Dimension X: {wallpaper?.dimension_x}</div>
-        <div>Dimension Y: {wallpaper?.dimension_y}</div>
+        <div>Width: {wallpaper?.dimension_x}</div>
+        <div>Height: {wallpaper?.dimension_y}</div>
         <div className="flex w-full">
           {wallpaper?.colors.map((color) => (
             <div
@@ -46,6 +48,8 @@ export function WallpaperCardDetail({
         <div>Purity: {wallpaper?.purity}</div>
         <div>File Size: {wallpaper?.file_size}</div>
         <div>File Type: {wallpaper?.file_type}</div>
+        <Button><DownloadIcon/> Save</Button>
+        <Button><ArrowSquareOutIcon/> Open</Button>
       </div>
     </>
   );
