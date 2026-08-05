@@ -226,6 +226,15 @@ pub struct SearchResponse {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, TS)]
+#[serde(rename_all = "lowercase")]
+#[ts(export)]
+pub enum Purity {
+    Sfw,
+    Sketchy,
+    Nsfw,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, TS)]
 pub struct Wallpaper {
     pub id: String,
     pub url: String,
@@ -233,7 +242,7 @@ pub struct Wallpaper {
     pub views: u64,
     pub favorites: u64,
     pub source: String,
-    pub purity: String,
+    pub purity: Purity,
     pub category: String,
     pub dimension_x: u32,
     pub dimension_y: u32,

@@ -16,7 +16,18 @@ import { useMediaQuery } from "@/hooks/media-query";
 import { Wallpaper } from "@/types/core/Wallpaper";
 import { ImageZoom } from "./kibo-ui/image-zoom";
 import { Button } from "./ui/button";
-import { ArrowSquareOutIcon, DownloadIcon } from "@phosphor-icons/react";
+import { ArrowSquareOutIcon, DownloadIcon, HeartIcon } from "@phosphor-icons/react";
+import { openUrl } from "@tauri-apps/plugin-opener";
+import PurityBadge from "./purity-badge";
+
+function formatFileSize(size: number): string {
+  const sizeInKb = size / 1024;
+  if (sizeInKb < 1024) {
+    return `${sizeInKb.toFixed(2)} KB`;
+  }
+  const sizeInMb = sizeInKb / 1024;
+  return `${sizeInMb.toFixed(2)} MB`;
+}
 
 export type WallpaperCardDetailProps = {
   wallpaper: Wallpaper | null;
@@ -32,7 +43,7 @@ export function WallpaperCardDetail({
   const content = (
     <>
       <WallpaperPanel wallpaper={wallpaper} />
-      <div className="overflow-y-scroll">
+      <div className="typography overflow-y-scroll">
         <div>Views: {wallpaper?.views}</div>
         <div>Width: {wallpaper?.dimension_x}</div>
         <div>Height: {wallpaper?.dimension_y}</div>
@@ -44,11 +55,20 @@ export function WallpaperCardDetail({
             ></div>
           ))}
         </div>
-        <div>Purity: {wallpaper?.purity}</div>
-        <div>File Size: {wallpaper?.file_size}</div>
+        {wallpaper?.purity && <PurityBadge purity={wallpaper?.purity} />}
+        <div>File Size: {wallpaper?.file_size && formatFileSize(Number(wallpaper.file_size))}</div>
         <div>File Type: {wallpaper?.file_type}</div>
-        <Button><DownloadIcon/> Save</Button>
-        <Button><ArrowSquareOutIcon/> Open</Button>
+        <div>Favorites: {wallpaper?.favorites}</div>
+        <div>Created At: {wallpaper?.created_at}</div>
+        <Button>
+          <DownloadIcon /> Save
+        </Button>
+        <Button>
+          <HeartIcon /> Favorite
+        </Button>
+        <Button onClick={() => wallpaper?.url && openUrl(wallpaper.url)}>
+          <ArrowSquareOutIcon /> Open
+        </Button>
       </div>
     </>
   );
