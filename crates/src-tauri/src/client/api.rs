@@ -3,13 +3,12 @@ use std::time::Duration;
 use reqwest::Client;
 
 use crate::{
-    client::model::{SearchParameters, SearchResponse},
+    client::model::{CollectionsParams, CollectionsResponse, SearchParameters, SearchResponse},
     error::SafeError,
 };
 pub struct WallHavenAPIClient {
     client: Client,
     base_url: String,
-    api_key: Option<String>,
 }
 
 impl WallHavenAPIClient {
@@ -39,25 +38,30 @@ impl WallHavenAPIClient {
         Ok(data)
     }
 
-    pub fn set_api_key(&mut self, api_key: Option<String>) {
-        self.api_key = api_key;
-    }
-
-    pub fn get_api_key(&self) -> Option<&str> {
-        self.api_key.as_deref()
+    pub async fn user_collections(
+        &self,
+        params: CollectionsParams,
+    ) -> Result<CollectionsResponse, SafeError> {
+        let path = "/v1/collections";
+        let result = self
+            .client
+            .get(format!("{}{}", self.base_url, path))
+            .query(&params)
+            .send()
+            .await?;
+        let data = result.json::<CollectionsResponse>().await?;
+        Ok(data)
     }
 }
 
 pub struct WallHavenAPIClientBuilder {
     base_url: String,
-    api_key: Option<String>,
 }
 
 impl WallHavenAPIClientBuilder {
-    pub fn new(base_url: impl Into<String>, api_key: impl Into<Option<String>>) -> Self {
+    pub fn new(base_url: impl Into<String>) -> Self {
         WallHavenAPIClientBuilder {
             base_url: base_url.into(),
-            api_key: api_key.into(),
         }
     }
 
@@ -66,7 +70,6 @@ impl WallHavenAPIClientBuilder {
         Ok(WallHavenAPIClient {
             client,
             base_url: self.base_url,
-            api_key: self.api_key,
         })
     }
 }

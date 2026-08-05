@@ -16,7 +16,11 @@ import { useMediaQuery } from "@/hooks/media-query";
 import { Wallpaper } from "@/types/core/Wallpaper";
 import { ImageZoom } from "./kibo-ui/image-zoom";
 import { Button } from "./ui/button";
-import { ArrowSquareOutIcon, DownloadIcon, HeartIcon } from "@phosphor-icons/react";
+import {
+  ArrowSquareOutIcon,
+  DownloadIcon,
+  HeartIcon,
+} from "@phosphor-icons/react";
 import { openUrl } from "@tauri-apps/plugin-opener";
 import PurityBadge from "./purity-badge";
 
@@ -56,7 +60,10 @@ export function WallpaperCardDetail({
           ))}
         </div>
         {wallpaper?.purity && <PurityBadge purity={wallpaper?.purity} />}
-        <div>File Size: {wallpaper?.file_size && formatFileSize(Number(wallpaper.file_size))}</div>
+        <div>
+          File Size:{" "}
+          {wallpaper?.file_size && formatFileSize(Number(wallpaper.file_size))}
+        </div>
         <div>File Type: {wallpaper?.file_type}</div>
         <div>Favorites: {wallpaper?.favorites}</div>
         <div>Created At: {wallpaper?.created_at}</div>
@@ -92,7 +99,7 @@ export function WallpaperCardDetail({
         <DrawerHeader>
           <DrawerTitle></DrawerTitle>
         </DrawerHeader>
-        <div className="overflow-y-scroll">{content}</div>
+        <div className="p-6 overflow-y-scroll">{content}</div>
       </DrawerContent>
     </Drawer>
   );
@@ -100,11 +107,9 @@ export function WallpaperCardDetail({
 
 function WallpaperPanel({ wallpaper }: { wallpaper: Wallpaper | null }) {
   return (
-    <ImageZoom zoomMargin={100} className=" rounded-md">
-      <img
-        src={wallpaper?.path}
-        className="h-fit w-fit aspect-square object-contain object-top rounded-md"
-      />
-    </ImageZoom>
+    <img
+      src={wallpaper?.path}
+      className="h-fit w-fit object-contain object-top rounded-md"
+    />
   );
 }

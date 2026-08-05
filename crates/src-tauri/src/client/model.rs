@@ -262,3 +262,25 @@ pub struct Thumbs {
     pub original: String,
     pub small: String,
 }
+
+#[derive(Debug, Clone, Serialize, Deserialize, TS)]
+#[ts(export)]
+pub struct Collection {
+    id: u32,
+    label: String,
+    views: u32,
+    public: u32,
+    count: u32,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, TS)]
+#[ts(export)]
+pub struct CollectionsResponse {
+    data: Vec<Collection>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, TS)]
+#[ts(export)]
+pub struct CollectionsParams {
+    apikey: String
+}

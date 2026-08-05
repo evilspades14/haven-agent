@@ -18,7 +18,7 @@ pub fn run() {
                 .build(),
         )
         .setup(|app| {
-            let builder = WallHavenAPIClientBuilder::new("https://wallhaven.cc/api", None);
+            let builder = WallHavenAPIClientBuilder::new("https://wallhaven.cc/api");
             let wallhaven_client = builder.build().expect("Failed to construct API Client!");
             let pool =
                 tauri::async_runtime::block_on(init_db(app)).expect("Failed to intialize DB!");
