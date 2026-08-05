@@ -9,7 +9,6 @@ import {
 import {
   Drawer,
   DrawerContent,
-  DrawerDescription,
   DrawerHeader,
   DrawerTitle,
 } from "@/components/ui/drawer";
@@ -57,9 +56,7 @@ export function WallpaperCardDetail({
   if (isDesktop) {
     return (
       <Dialog open={!!wallpaper} onOpenChange={onOpenChange} modal>
-        <DialogContent
-          className="min-w-2xl"
-        >
+        <DialogContent className="min-w-2xl">
           <DialogHeader>
             <DialogTitle></DialogTitle>
           </DialogHeader>
