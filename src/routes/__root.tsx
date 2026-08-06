@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/navigation-menu";
 import {
   FileSearchIcon,
+  GearIcon,
   HouseSimpleIcon,
   MagnifyingGlassIcon,
   PlusIcon,
@@ -38,6 +39,12 @@ const TABS = [
     label: "Collection",
     icon: StackIcon,
     link: "/collection",
+  },
+  {
+    id: "settings",
+    label: "Settings",
+    icon: GearIcon,
+    link: "/settings",
   },
   // { id: "activity", label: "Activity", icon: Bell },
   // { id: "profile", label: "Profile", icon: User },
@@ -114,7 +121,7 @@ function BottomNav() {
                 // onClick={() => onChange(tab.id)}
                 // aria-label={tab.label}
                 // aria-current={isActive ? "page" : undefined}
-                className="relative -mt-7 h-14 w-14 rounded-full transition-transform duration-200 ease-out active:scale-90 flex flex-col items-center justify-center bg-accent"
+                className="relative border -mt-12 h-14 w-14 rounded-full transition-transform duration-200 ease-out active:scale-90 flex flex-col items-center justify-center bg-accent"
               >
                 <Icon className="h-6 w-6" strokeWidth={2.5} />
               </button>
@@ -122,18 +129,20 @@ function BottomNav() {
           }
 
           return (
-            <button
+            <Button
               key={tab.id}
-              // onClick={() => onChange(tab.id)}
               aria-label={tab.label}
+              variant={"ghost"}
+              asChild
               // aria-current={isActive ? "page" : undefined}
-              className="relative flex w-14 flex-col items-center justify-center gap-0.5 rounded-full py-2 transition-transform duration-200 ease-out active:scale-90"
+              className="relative flex h-14 w-14 flex-col items-center justify-center gap-0.5 rounded-full py-2 transition-transform duration-200 ease-out active:scale-90"
             >
-              <Icon
-                className={`relative h-5 w-5 transition-all duration-200 ease-out`}
-                
-              />
-            </button>
+              <Link to={tab.link}>
+                <Icon
+                  className={`relative h-5 w-5 transition-all duration-200 ease-out`}
+                />
+              </Link>
+            </Button>
           );
         })}
       </nav>
