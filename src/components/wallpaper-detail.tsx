@@ -110,6 +110,9 @@ function WallpaperPanel({ wallpaper }: { wallpaper: Wallpaper | null }) {
     <img
       src={wallpaper?.path}
       className="h-fit w-fit object-contain object-top rounded-md"
+      alt=""
+      decoding="async"
+      loading="eager"
     />
   );
 }
