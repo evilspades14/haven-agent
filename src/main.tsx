@@ -5,6 +5,7 @@ import { routeTree } from "./routeTree.gen";
 import { createMemoryHistory, createRouter, RouterProvider } from "@tanstack/react-router";
 import { ThemeProvider } from "./components/theme-provider";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Toaster } from "./components/ui/sonner";
 
 const queryClient = new QueryClient()
 
@@ -25,6 +26,7 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
     <ThemeProvider>
       <QueryClientProvider client={queryClient}>
         <RouterProvider router={router} context={{ queryClient }} />
+        <Toaster richColors/>
       </QueryClientProvider>
     </ThemeProvider>
   </React.StrictMode>,

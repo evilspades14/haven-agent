@@ -27,13 +27,13 @@ export interface AppContext {
 
 const TABS = [
   { id: "home", label: "Home", icon: HouseSimpleIcon, link: "/" },
-  {
-    id: "search",
-    label: "Search",
-    icon: MagnifyingGlassIcon,
-    link: "",
-    elevated: true,
-  },
+  // {
+  //   id: "search",
+  //   label: "Search",
+  //   icon: MagnifyingGlassIcon,
+  //   link: "",
+  //   elevated: true,
+  // },
   {
     id: "collection",
     label: "Collection",

@@ -22,6 +22,7 @@ import {
 import { Field } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Spinner } from "@/components/ui/spinner";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { WallpaperCard } from "@/components/wallpaper-card";
 import { WallpaperCardDetail } from "@/components/wallpaper-detail";
@@ -42,7 +43,7 @@ import {
 } from "@phosphor-icons/react";
 import { CheckCircleIcon } from "@phosphor-icons/react/dist/ssr";
 import { createFileRoute } from "@tanstack/react-router";
-import { AnimatePresence, useInView } from "motion/react";
+import { AnimatePresence, LayoutGroup, motion, useInView } from "motion/react";
 import React from "react";
 import { useEffect, useRef, useState } from "react";
 
@@ -58,6 +59,22 @@ function categoryValuestoCategoryParam(
     categories[val] = true;
   });
   return categories;
+}
+
+function useLoadMoreTrigger(
+  onIntersect: () => void,
+  enabled: boolean,
+  root?: React.RefObject<Element>,
+) {
+  const ref = useRef<HTMLDivElement>(null);
+  const isInView = useInView(ref, { root, margin: "0px 0px 500px 0px" });
+
+  useEffect(() => {
+    if (isInView && enabled) onIntersect();
+  }, [isInView, enabled, onIntersect]);
+
+  console.log(isInView);
+  return ref;
 }
 
 function RouteComponent() {
@@ -83,18 +100,12 @@ function RouteComponent() {
     { value: "toplist", label: "Toplist", disabled: false },
   ];
 
-  const sentinelRef = useRef(null);
-  const scrollRef = useRef(null);
-  const isInView = useInView(sentinelRef, {
-    // root: scrollRef.current,
-    margin: "0px 0px 800px 0px",
-  });
-
-  useEffect(() => {
-    if (isInView && hasNextPage && !isFetchingNextPage) {
-      fetchNextPage();
-    }
-  }, [isInView, hasNextPage, isFetchingNextPage, fetchNextPage]);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const sentinelRef = useLoadMoreTrigger(
+    fetchNextPage,
+    !!hasNextPage && !isFetchingNextPage,
+    scrollContainerRef,
+  );
 
   const columns = useMasonryColumns(data?.wallpapers ?? [], 3);
 
@@ -146,28 +157,44 @@ function RouteComponent() {
           <Skeleton className="h-36 w-full mb-3" key={index} />
         ))
       ) : data && data.pages.length > 0 ? (
-        <div
-          ref={scrollRef}
-          className="overflow-y-auto overscroll-contain scroll-fade min-h-0"
-        >
-          <AnimatePresence mode="popLayout">
-            <div className="flex p-4 gap-3 justify-center">
+        <LayoutGroup>
+          <div
+            className="overflow-y-auto min-h-0 h-dvh"
+            ref={scrollContainerRef}
+          >
+            <div className="flex flex-1 p-4 gap-3 justify-center">
               {columns.map((col, i) => (
                 <div key={i} className="gap-4">
-                  {col.map((wallpaper) => (
-                    <WallpaperCard
-                      wallpaper={wallpaper}
-                      onClick={() => setSelectedWallpaper(wallpaper)}
-                      key={wallpaper.id}
-                      className="mb-3"
-                    />
-                  ))}
+                  <AnimatePresence mode="popLayout">
+                    {col.map((wallpaper) => (
+                      <WallpaperCard
+                        wallpaper={wallpaper}
+                        onClick={() => setSelectedWallpaper(wallpaper)}
+                        key={wallpaper.id}
+                        className="mb-3"
+                      />
+                    ))}
+                  </AnimatePresence>
                 </div>
               ))}
             </div>
-          </AnimatePresence>
-          <div ref={sentinelRef} />
-        </div>
+
+            <div ref={sentinelRef} className="h-1" />
+
+            <AnimatePresence>
+              {isFetchingNextPage && (
+                <motion.div
+                  key="spinner"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                >
+                  <Spinner />
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        </LayoutGroup>
       ) : (
         <Empty>
           <EmptyHeader>

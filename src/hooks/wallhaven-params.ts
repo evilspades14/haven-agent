@@ -9,7 +9,7 @@ export type WallhavenClientParamsStoreState = {
 
 const useWallhavenClientParamsStore = create<WallhavenClientParamsStoreState>(
   (set) => ({
-    params: {},
+    params: { ...defaultSearchParamters() },
     updateParams: (update) =>
       set((prev) => ({ params: { ...prev.params, ...update } })),
   }),

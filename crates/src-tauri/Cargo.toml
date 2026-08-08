@@ -31,3 +31,7 @@ tauri-plugin-log = "2"
 serde_path_to_error = "0.1.20"
 tauri-plugin-sql = { version = "2", features = ["sqlite"] }
 sqlx = { version = "0.8", features = ["sqlite", "runtime-tokio", "macros"] }
+tauri-plugin-store = "2"
+
+[profile.dev]
+opt-level = 0

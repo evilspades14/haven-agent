@@ -1,10 +1,13 @@
 use std::fs;
 
-use sqlx::{SqlitePool, sqlite::SqlitePoolOptions};
+use sqlx::{sqlite::SqlitePoolOptions, SqlitePool};
 use tauri::Manager;
 
 pub async fn init_db(app: &tauri::App) -> Result<SqlitePool, sqlx::Error> {
-    let app_dir = app.path().app_data_dir().expect("Failed to get app data dir");
+    let app_dir = app
+        .path()
+        .app_data_dir()
+        .expect("Failed to get app data dir");
     fs::create_dir_all(&app_dir).expect("Failed to create app data dir");
 
     let db_path = app_dir.join("app.db");

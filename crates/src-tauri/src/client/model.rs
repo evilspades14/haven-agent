@@ -282,5 +282,5 @@ pub struct CollectionsResponse {
 #[derive(Debug, Clone, Serialize, Deserialize, TS)]
 #[ts(export)]
 pub struct CollectionsParams {
-    apikey: String
+    apikey: String,
 }
