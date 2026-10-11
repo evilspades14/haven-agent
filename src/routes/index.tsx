@@ -82,6 +82,7 @@ function RouteComponent() {
   const updateParams = useWallhavenClientParamsStore(
     (state) => state.updateParams,
   );
+  
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
     useWallhavenSearch(params);
 
@@ -142,11 +143,7 @@ function RouteComponent() {
         </DropdownMenu>
 
         <Button size={"icon"} onClick={() => setIsOptionsDialogOpen(true)}>
-          {!!params.sorting ? (
-            <SlidersHorizontalIcon />
-          ) : (
-            <SlidersHorizontalIcon />
-          )}
+          <SlidersHorizontalIcon />
         </Button>
         <Button size={"icon"} onClick={() => updateParams({ q: input })}>
           <MagnifyingGlassIcon />

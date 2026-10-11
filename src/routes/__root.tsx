@@ -11,11 +11,8 @@ import {
   NavigationMenuList,
 } from "@/components/ui/navigation-menu";
 import {
-  FileSearchIcon,
   GearIcon,
   HouseSimpleIcon,
-  MagnifyingGlassIcon,
-  PlusIcon,
   StackIcon,
 } from "@phosphor-icons/react";
 import { useMediaQuery } from "@/hooks/media-query";
