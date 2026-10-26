@@ -72,8 +72,6 @@ function useLoadMoreTrigger(
   useEffect(() => {
     if (isInView && enabled) onIntersect();
   }, [isInView, enabled, onIntersect]);
-
-  console.log(isInView);
   return ref;
 }
 

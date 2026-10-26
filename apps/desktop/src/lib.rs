@@ -1,12 +1,11 @@
-mod client;
+mod command;
 mod db;
-mod error;
 mod state;
-use client::*;
 use tauri::Manager;
 use tokio::sync::Mutex;
+use wallhaven::client::api::WallHavenAPIClientBuilder;
 
-use crate::{client::api::WallHavenAPIClientBuilder, db::init_db, state::state::AppState};
+use crate::{db::init_db, state::state::AppState};
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -31,7 +30,9 @@ pub fn run() {
             Ok(())
         })
         .plugin(tauri_plugin_opener::init())
-        .invoke_handler(tauri::generate_handler![command::wallpaper_search])
+        .invoke_handler(tauri::generate_handler![
+            command::wallhaven::wallpaper_search
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

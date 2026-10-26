@@ -1,5 +1,13 @@
 [workspace]
-members = [
-    "crates/*",
-    "apps/desktop"
-]
+members = ["crates/*", "apps/desktop"]
+
+[workspace.dependencies]
+wallhaven = { path = "crates/wallhaven" }
+
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+reqwest = { version = "0.13.3", features = ["query", "json"] }
+thiserror = "2.0.18"
+ts-rs = "12.0.1"
+tokio = "1.52.3"
+log = "0.4.29"

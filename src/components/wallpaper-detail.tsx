@@ -19,10 +19,24 @@ import { Button } from "./ui/button";
 import {
   ArrowSquareOutIcon,
   DownloadIcon,
+  EyeIcon,
+  FileArchiveIcon,
+  FileIcon,
+  FileImageIcon,
   HeartIcon,
+  PercentIcon,
+  XIcon,
 } from "@phosphor-icons/react";
 import { openUrl } from "@tauri-apps/plugin-opener";
 import PurityBadge from "./purity-badge";
+import { cn } from "@/lib/utils";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "./ui/tooltip";
+import { Table, TableCaption, TableCell, TableRow } from "./ui/table";
 
 function formatFileSize(size: number): string {
   const sizeInKb = size / 1024;
@@ -44,13 +58,78 @@ export function WallpaperCardDetail({
 }: WallpaperCardDetailProps) {
   const isDesktop = useMediaQuery("(min-width: 768px)");
 
-  const content = (
-    <>
-      <WallpaperPanel wallpaper={wallpaper} />
-      <div className="typography overflow-y-scroll">
-        <div>Views: {wallpaper?.views}</div>
-        <div>Width: {wallpaper?.dimension_x}</div>
-        <div>Height: {wallpaper?.dimension_y}</div>
+  const wallpaperPanel = <WallpaperPanel wallpaper={wallpaper} />;
+  const infoPanel = (
+    <TooltipProvider disableHoverableContent>
+      <div className="flex flex-col typography overflow-y-scroll">
+        <Table className="overflow-y-scroll">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <TableRow>
+                <TableCell>
+                  <EyeIcon />
+                </TableCell>
+                <TableCell className="text-right">{wallpaper?.views}</TableCell>
+              </TableRow>
+            </TooltipTrigger>
+            <TooltipContent>Views</TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <TableRow>
+                <TableCell>
+                  <HeartIcon />
+                </TableCell>
+                <TableCell className="text-right">
+                  {wallpaper?.favorites}
+                </TableCell>
+              </TableRow>
+            </TooltipTrigger>
+            <TooltipContent>Favorites</TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <TableRow>
+                <TableCell>
+                  <FileArchiveIcon />
+                </TableCell>
+                <TableCell className="text-right font-mono">
+                  {wallpaper?.file_size &&
+                    formatFileSize(Number(wallpaper.file_size))}
+                </TableCell>
+              </TableRow>
+            </TooltipTrigger>
+            <TooltipContent>File Size</TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <TableRow>
+                <TableCell>
+                  <FileIcon />
+                </TableCell>
+                <TableCell className="text-right font-mono">
+                  {wallpaper?.file_type}
+                </TableCell>
+              </TableRow>
+            </TooltipTrigger>
+            <TooltipContent>File Type</TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <TableRow>
+                <TableCell>
+                  <PercentIcon />
+                </TableCell>
+                <TableCell className="flex items-center justify-end">
+                  {wallpaper?.dimension_x}
+                  <XIcon />
+                  {wallpaper?.dimension_y}
+                </TableCell>
+              </TableRow>
+            </TooltipTrigger>
+            <TooltipContent>Resolution</TooltipContent>
+          </Tooltip>
+        </Table>
         <div className="flex w-full">
           {wallpaper?.colors.map((color) => (
             <div
@@ -61,10 +140,11 @@ export function WallpaperCardDetail({
         </div>
         {wallpaper?.purity && <PurityBadge purity={wallpaper?.purity} />}
         <div>
+          {/*<FileImageIcon />*/}
           File Size:{" "}
           {wallpaper?.file_size && formatFileSize(Number(wallpaper.file_size))}
         </div>
-        <div>File Type: {wallpaper?.file_type}</div>
+        {/*<div>File Type: {wallpaper?.file_type}</div>*/}
         <div>Favorites: {wallpaper?.favorites}</div>
         <div>Created At: {wallpaper?.created_at}</div>
         <Button>
@@ -77,17 +157,18 @@ export function WallpaperCardDetail({
           <ArrowSquareOutIcon /> Open
         </Button>
       </div>
-    </>
+    </TooltipProvider>
   );
 
   if (isDesktop) {
     return (
       <Dialog open={!!wallpaper} onOpenChange={onOpenChange} modal>
-        <DialogContent className="min-w-2xl">
+        <DialogContent className="flex min-w-2xl max-h-dvh">
           <DialogHeader>
-            <DialogTitle></DialogTitle>
+            <DialogTitle></DialogTitle>{" "}
           </DialogHeader>
-          <div className="grid grid-cols-2 gap-4 h-full">{content}</div>
+          {infoPanel}
+          {wallpaperPanel}
         </DialogContent>
       </Dialog>
     );
@@ -99,7 +180,10 @@ export function WallpaperCardDetail({
         <DrawerHeader>
           <DrawerTitle></DrawerTitle>
         </DrawerHeader>
-        <div className="p-6 overflow-y-scroll">{content}</div>
+        <div className="p-6 overflow-y-scroll">
+          {wallpaperPanel}
+          {infoPanel}
+        </div>
       </DrawerContent>
     </Drawer>
   );
@@ -107,12 +191,14 @@ export function WallpaperCardDetail({
 
 function WallpaperPanel({ wallpaper }: { wallpaper: Wallpaper | null }) {
   return (
-    <img
-      src={wallpaper?.path}
-      className="h-fit w-fit object-contain object-top rounded-md"
-      alt=""
-      decoding="async"
-      loading="eager"
-    />
+    <div className="flex h-fit w-full items-center justify-center overflow-hidden">
+      <img
+        src={wallpaper?.path}
+        className="max-h-full max-w-full object-contain object-top rounded-md"
+        alt=""
+        // decoding="async"
+        // loading="eager"
+      />
+    </div>
   );
 }
