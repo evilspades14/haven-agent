@@ -156,7 +156,7 @@ export function WallpaperCardDetail({
   if (isDesktop) {
     return (
       <Dialog open={!!wallpaper} onOpenChange={onOpenChange} modal>
-        <DialogContent className="flex items-center min-w-2xl max-h-dvh gap-3">
+        <DialogContent className="flex items-center min-w-[85vw] max-h-dvh gap-3 pl-0 ml-0">
           <DialogHeader>
             <DialogTitle></DialogTitle>{" "}
           </DialogHeader>
@@ -202,6 +202,8 @@ function WallpaperPanel({ wallpaper }: { wallpaper: Wallpaper | null }) {
         src={wallpaper?.path}
         className="max-h-full max-w-full object-contain object-top rounded-md"
         alt=""
+        width={wallpaper?.dimension_x}
+        height={wallpaper?.dimension_y}
         // decoding="async"
         // loading="eager"
       />
