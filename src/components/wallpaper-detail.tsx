@@ -134,20 +134,13 @@ export function WallpaperCardDetail({
           {wallpaper?.colors.map((color) => (
             <div
               style={{ backgroundColor: color }}
-              className={`bg-${color} h-4 w-full`}
+              className={`bg-${color} h-4 w-full rounded-full`}
             ></div>
           ))}
         </div>
         {wallpaper?.purity && <PurityBadge purity={wallpaper?.purity} />}
-        <div>
-          {/*<FileImageIcon />*/}
-          File Size:{" "}
-          {wallpaper?.file_size && formatFileSize(Number(wallpaper.file_size))}
-        </div>
-        {/*<div>File Type: {wallpaper?.file_type}</div>*/}
-        <div>Favorites: {wallpaper?.favorites}</div>
         <div>Created At: {wallpaper?.created_at}</div>
-        <Button>
+        {/*<Button>
           <DownloadIcon /> Save
         </Button>
         <Button>
@@ -155,7 +148,7 @@ export function WallpaperCardDetail({
         </Button>
         <Button onClick={() => wallpaper?.url && openUrl(wallpaper.url)}>
           <ArrowSquareOutIcon /> Open
-        </Button>
+        </Button>*/}
       </div>
     </TooltipProvider>
   );
@@ -163,12 +156,25 @@ export function WallpaperCardDetail({
   if (isDesktop) {
     return (
       <Dialog open={!!wallpaper} onOpenChange={onOpenChange} modal>
-        <DialogContent className="flex min-w-2xl max-h-dvh">
+        <DialogContent className="flex items-center min-w-2xl max-h-dvh gap-3">
           <DialogHeader>
             <DialogTitle></DialogTitle>{" "}
           </DialogHeader>
           {infoPanel}
-          {wallpaperPanel}
+          <div className="flex flex-col w-fit gap-3">
+            {wallpaperPanel}
+            <div className="grid grid-cols-3">
+              <Button>
+                <DownloadIcon /> Save
+              </Button>
+              <Button>
+                <HeartIcon /> Favorite
+              </Button>
+              <Button onClick={() => wallpaper?.url && openUrl(wallpaper.url)}>
+                <ArrowSquareOutIcon /> Open
+              </Button>
+            </div>
+          </div>
         </DialogContent>
       </Dialog>
     );

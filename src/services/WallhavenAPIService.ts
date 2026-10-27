@@ -1,4 +1,5 @@
 import { CollectionsParams } from "@/types/core/CollectionsParams";
+import { CollectionsResponse } from "@/types/core/CollectionsResponse";
 import { SearchParameters } from "@/types/core/SearchParameters";
 import { SearchResponse } from "@/types/core/SearchResponse";
 import { invoke } from "@tauri-apps/api/core";
@@ -8,8 +9,8 @@ const WallhavenAPIService = {
     return await invoke<SearchResponse>("wallpaper_search", { params });
   },
   async getUserCollections(params: CollectionsParams) {
-    return await invoke<SearchResponse>("wallpaper_search", { params });
-  }
+    return await invoke<CollectionsResponse>("user_collections", { params });
+  },
 };
 
 export default WallhavenAPIService;

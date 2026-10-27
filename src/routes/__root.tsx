@@ -49,8 +49,6 @@ const TABS = [
 
 function BottomNav() {
   return (
-    // md:hidden -> only renders at mobile widths, matching a Tauri layout
-    // where desktop keeps a sidebar/topnav and mobile gets this bar instead.
     <div
       className="md:hidden fixed inset-x-0 bottom-0 z-50 flex justify-center px-4"
       style={{ paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 16px)" }}
@@ -111,7 +109,7 @@ function BottomNav() {
           const Icon = tab.icon;
           // const isActive = active === tab.id;
 
-          if (tab.elevated) {
+          if ("elevated" in tab && tab.elevated) {
             return (
               <button
                 key={tab.id}
@@ -168,9 +166,16 @@ function Root() {
                 </Link>
               </NavigationMenuLink>
             </NavigationMenuItem>
+            <NavigationMenuItem>
+              <NavigationMenuLink asChild>
+                <Link to="/settings">
+                  <GearIcon /> Settings
+                </Link>
+              </NavigationMenuLink>
+            </NavigationMenuItem>
           </NavigationMenuList>
         </NavigationMenu>
-        <main className="relative min-h-0 min-w-0 flex-1">
+        <main className="relative min-h-0 min-w-0 flex-1 p-3">
           <Outlet />
         </main>
       </div>

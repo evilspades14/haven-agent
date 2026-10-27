@@ -25,41 +25,52 @@ export const Route = createFileRoute("/settings")({
 });
 
 function RouteComponent() {
-  const [apiKeyInput, setApiKeyInput] = useState<string>("")
+  const [apiKeyInput, setApiKeyInput] = useState<string>("");
   const { apiKey, updateApiKey } = useSettings();
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>API Credentials</CardTitle>
-        <CardDescription>
-          Use a Wallhaven API key for more features.{" "}
-          <a
-            className="inline-flex items-center"
-            onClick={() => openUrl("https://wallhaven.cc/settings/account")}
-          >
-            Get yours here <ArrowUpRightIcon />
-          </a>{" "}
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <Field orientation={"horizontal"}>
-          <FieldLabel>Key</FieldLabel>
-          <Input
-            value={apiKeyInput}
-            onChange={(e) => setApiKeyInput(e.target.value)}
-            type="text"
-            placeholder="*****"
-          />
-          <Button
-            onClick={async () => {
-              updateApiKey(apiKeyInput)
-              toast.success("API Key updated.");
-            }}
-          >
-            Save
-          </Button>
-        </Field>
-      </CardContent>
-    </Card>
+    <div className="flex flex-col gap-3">
+      <Card>
+        <CardHeader>
+          <CardTitle>API Credentials</CardTitle>
+          <CardDescription>
+            Use a Wallhaven API key for more features.{" "}
+            <a
+              className="inline-flex items-center"
+              onClick={() => openUrl("https://wallhaven.cc/settings/account")}
+            >
+              Get yours here <ArrowUpRightIcon />
+            </a>{" "}
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Field orientation={"horizontal"}>
+            <FieldLabel>Key</FieldLabel>
+            <Input
+              value={apiKeyInput}
+              onChange={(e) => setApiKeyInput(e.target.value)}
+              type="text"
+              placeholder="*****"
+            />
+            <Button
+              onClick={async () => {
+                toast.promise(async () => updateApiKey(apiKeyInput), {
+                  success: "API Key updated.",
+                  error: "Failed to update API key.",
+                });
+              }}
+            >
+              Save
+            </Button>
+          </Field>
+        </CardContent>
+      </Card>
+      <Card>
+        <CardHeader>
+          <CardTitle>Theme</CardTitle>
+          <CardDescription></CardDescription>
+        </CardHeader>
+        <CardContent></CardContent>
+      </Card>
+    </div>
   );
 }
