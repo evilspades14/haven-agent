@@ -284,3 +284,9 @@ pub struct CollectionsResponse {
 pub struct CollectionsParams {
     apikey: String,
 }
+
+#[derive(Debug, Clone, Serialize, Deserialize, TS)]
+#[ts(export)]
+pub struct ListCollectionParams {
+    collection_id: String
+}

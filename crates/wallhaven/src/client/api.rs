@@ -52,6 +52,10 @@ impl WallHavenAPIClient {
         let data = result.json::<CollectionsResponse>().await?;
         Ok(data)
     }
+
+    // pub async fn list_collection(&self, params) {
+    //     
+    // }
 }
 
 pub struct WallHavenAPIClientBuilder {

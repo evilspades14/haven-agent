@@ -3,6 +3,8 @@
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -14,7 +16,6 @@ import {
 } from "@/components/ui/drawer";
 import { useMediaQuery } from "@/hooks/media-query";
 import { Wallpaper } from "@/types/core/Wallpaper";
-import { ImageZoom } from "./kibo-ui/image-zoom";
 import { Button } from "./ui/button";
 import {
   ArrowSquareOutIcon,
@@ -22,21 +23,18 @@ import {
   EyeIcon,
   FileArchiveIcon,
   FileIcon,
-  FileImageIcon,
   HeartIcon,
   PercentIcon,
   XIcon,
 } from "@phosphor-icons/react";
 import { openUrl } from "@tauri-apps/plugin-opener";
-import PurityBadge from "./purity-badge";
-import { cn } from "@/lib/utils";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "./ui/tooltip";
-import { Table, TableCaption, TableCell, TableRow } from "./ui/table";
+import { Table, TableCell, TableRow } from "./ui/table";
 
 function formatFileSize(size: number): string {
   const sizeInKb = size / 1024;
@@ -58,7 +56,6 @@ export function WallpaperCardDetail({
 }: WallpaperCardDetailProps) {
   const isDesktop = useMediaQuery("(min-width: 768px)");
 
-  const wallpaperPanel = <WallpaperPanel wallpaper={wallpaper} />;
   const infoPanel = (
     <TooltipProvider disableHoverableContent>
       <div className="flex flex-col typography overflow-y-scroll">
@@ -138,17 +135,8 @@ export function WallpaperCardDetail({
             ></div>
           ))}
         </div>
-        {wallpaper?.purity && <PurityBadge purity={wallpaper?.purity} />}
-        <div>Created At: {wallpaper?.created_at}</div>
-        {/*<Button>
-          <DownloadIcon /> Save
-        </Button>
-        <Button>
-          <HeartIcon /> Favorite
-        </Button>
-        <Button onClick={() => wallpaper?.url && openUrl(wallpaper.url)}>
-          <ArrowSquareOutIcon /> Open
-        </Button>*/}
+        {/*{wallpaper?.purity && <PurityBadge purity={wallpaper?.purity} />}*/}
+        {/*<div>Created At: {wallpaper?.created_at}</div>*/}
       </div>
     </TooltipProvider>
   );
@@ -156,23 +144,28 @@ export function WallpaperCardDetail({
   if (isDesktop) {
     return (
       <Dialog open={!!wallpaper} onOpenChange={onOpenChange} modal>
-        <DialogContent className="flex items-center min-w-[85vw] max-h-dvh gap-3 pl-0 ml-0">
+        <DialogContent className="min-w-2xl gap-3">
           <DialogHeader>
-            <DialogTitle></DialogTitle>{" "}
+            <DialogTitle>{wallpaper?.source}</DialogTitle>
+            <DialogDescription>{wallpaper?.short_url}</DialogDescription>
           </DialogHeader>
-          {infoPanel}
-          <div className="flex flex-col w-fit gap-3">
-            {wallpaperPanel}
-            <div className="grid grid-cols-3">
-              <Button>
-                <DownloadIcon /> Save
-              </Button>
-              <Button>
-                <HeartIcon /> Favorite
-              </Button>
-              <Button onClick={() => wallpaper?.url && openUrl(wallpaper.url)}>
-                <ArrowSquareOutIcon /> Open
-              </Button>
+          <div className="flex items-center">
+            {infoPanel}
+            <div className="flex flex-col flex-1 gap-3 w-full h-full">
+              <WallpaperPanel wallpaper={wallpaper} />
+              <div className="grid grid-cols-3 ">
+                <Button>
+                  <DownloadIcon /> Save
+                </Button>
+                <Button>
+                  <HeartIcon /> Favorite
+                </Button>
+                <Button
+                  onClick={() => wallpaper?.url && openUrl(wallpaper.url)}
+                >
+                  <ArrowSquareOutIcon /> Open
+                </Button>
+              </div>
             </div>
           </div>
         </DialogContent>
@@ -187,7 +180,7 @@ export function WallpaperCardDetail({
           <DrawerTitle></DrawerTitle>
         </DrawerHeader>
         <div className="p-6 overflow-y-scroll">
-          {wallpaperPanel}
+          <WallpaperPanel wallpaper={wallpaper} />
           {infoPanel}
         </div>
       </DrawerContent>
@@ -197,15 +190,13 @@ export function WallpaperCardDetail({
 
 function WallpaperPanel({ wallpaper }: { wallpaper: Wallpaper | null }) {
   return (
-    <div className="flex h-fit w-full items-center justify-center overflow-hidden">
+    <div className="h-fit w-full items-center justify-center overflow-hidden">
       <img
         src={wallpaper?.path}
         className="max-h-full max-w-full object-contain object-top rounded-md"
         alt=""
         width={wallpaper?.dimension_x}
         height={wallpaper?.dimension_y}
-        // decoding="async"
-        // loading="eager"
       />
     </div>
   );
