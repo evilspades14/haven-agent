@@ -53,57 +53,6 @@ function BottomNav() {
       className="md:hidden fixed inset-x-0 bottom-0 z-50 flex justify-center px-4"
       style={{ paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 16px)" }}
     >
-      {/*<NavigationMenu>
-        <NavigationMenuList className="bg-accent rounded-md">
-          {TABS.map((tab) => {
-            const Icon = tab.icon;
-
-            if (tab.elevated) {
-              return (
-                <Button
-                  key={tab.id}
-                  onClick={() => onChange(tab.id)}
-                  aria-label={tab.label}
-                  variant={"destructive"}
-                  className="relative -mt-7 flex h-14 w-14 items-center justify-center rounded-full transition-transform duration-200 ease-out active:scale-90"
-                >
-                  <Icon className="size" strokeWidth={2.5} />
-                </Button>
-              );
-            }
-
-            return (
-              <NavigationMenuItem>
-                <NavigationMenuLink asChild>
-                  <Link
-                    key={tab.id}
-                    to={tab.link}
-                    aria-label={tab.label}
-                    className="bg-transparent relative flex w-14 flex-col items-center justify-center gap-0.5 rounded-full py-2 transition-transform duration-200 ease-out active:scale-90"
-                  >
-                    <span
-                      className={
-                        `absolute inset-0 bg-accent transition-opacity duration-200 ease-out rounded-full`
-                        // ${
-                        // isActive ? "opacity-100" : "opacity-0"
-                        // }`
-                      }
-                    />
-                    <Icon
-                      className={`relative h-5 w-5 transition-all duration-200 ease-out`}
-                    />
-                    <span
-                      className={`relative text-xs font-medium transition-colors duration-200`}
-                    >
-                      {tab.label}
-                    </span>
-                  </Link>
-                </NavigationMenuLink>
-              </NavigationMenuItem>
-            );
-          })}
-        </NavigationMenuList>
-      </NavigationMenu>*/}
       <nav className="flex items-center gap-1 rounded-full bg-background backdrop-blur-xl border shadow-xl px-2 py-2">
         {TABS.map((tab) => {
           const Icon = tab.icon;
@@ -175,14 +124,14 @@ function Root() {
             </NavigationMenuItem>
           </NavigationMenuList>
         </NavigationMenu>
-        <main className="relative min-h-0 min-w-0 flex-1 p-3">
+        <main className="relative min-h-0 min-w-0 flex-1">
           <Outlet />
         </main>
       </div>
     );
   } else {
     return (
-      <div className="flex-1 h-dvh p-6 overflow-hidden">
+      <div className="flex-1 max-h-dvh p-6 overflow-hidden pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]">
         <main className="relative min-h-0 min-w-0 flex-1">
           <Outlet />
         </main>

@@ -1,5 +1,4 @@
 import WallhavenAPIService from "@/services/WallhavenAPIService";
-import { CollectionsParams } from "@/types/core/CollectionsParams";
 import { SearchParameters } from "@/types/core/SearchParameters";
 import { SearchResponse } from "@/types/core/SearchResponse";
 import {

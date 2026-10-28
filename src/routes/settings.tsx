@@ -12,13 +12,10 @@ import { useSettings } from "@/hooks/use-settings";
 import { ArrowUpRightIcon } from "@phosphor-icons/react";
 import { createFileRoute } from "@tanstack/react-router";
 import { openUrl } from "@tauri-apps/plugin-opener";
-import { load } from "@tauri-apps/plugin-store";
-import { LazyStore } from "@tauri-apps/plugin-store";
-import { useEffect, useState } from "react";
-import { useSonner } from "sonner";
+import { useState } from "react";
 import { toast } from "sonner";
 
-const store = new LazyStore("settings.json");
+// const store = new LazyStore("settings.json");
 
 export const Route = createFileRoute("/settings")({
   component: RouteComponent,
@@ -26,7 +23,7 @@ export const Route = createFileRoute("/settings")({
 
 function RouteComponent() {
   const [apiKeyInput, setApiKeyInput] = useState<string>("");
-  const { apiKey, updateApiKey } = useSettings();
+  const { updateApiKey } = useSettings();
   return (
     <div className="flex flex-col gap-3">
       <Card>

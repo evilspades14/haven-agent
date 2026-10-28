@@ -64,7 +64,7 @@ function categoryValuestoCategoryParam(
 function useLoadMoreTrigger(
   onIntersect: () => void,
   enabled: boolean,
-  root?: React.RefObject<Element>,
+  root?: React.RefObject<HTMLDivElement | null>,
 ) {
   const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { root, margin: "0px 0px 500px 0px" });
