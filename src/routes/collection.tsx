@@ -6,10 +6,16 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@/components/ui/empty";
-import { Item, ItemContent, ItemTitle } from "@/components/ui/item";
+import {
+  Item,
+  ItemContent,
+  ItemHeader,
+  ItemMedia,
+  ItemTitle,
+} from "@/components/ui/item";
 import { useUserCollections } from "@/features/use-wallhaven";
 import { useSettings } from "@/hooks/use-settings";
-import { ImageIcon } from "@phosphor-icons/react";
+import { ImageIcon, StackIcon } from "@phosphor-icons/react";
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/collection")({
@@ -29,15 +35,25 @@ function RouteComponent() {
       </div>
     );
   return (
-    <div className="flex flex-col">
+    <div>
       {data?.data && data.data?.length > 0 ? (
-        data.data.map((collection) => (
-          <Item>
-            <ItemContent>
-              <ItemTitle>{collection.label}</ItemTitle>
-            </ItemContent>
-          </Item>
-        ))
+        <div className="flex">
+          <div className="gap-3">
+            {data.data.map((collection) => (
+              <Item variant={"outline"}>
+                <ItemMedia variant={"icon"}>
+                  <StackIcon />
+                </ItemMedia>
+                <ItemContent>
+                  <ItemTitle>{collection.label}</ItemTitle>
+                </ItemContent>
+              </Item>
+            ))}
+          </div>
+          <div>
+            
+          </div>
+        </div>
       ) : (
         <Empty>
           <EmptyHeader>

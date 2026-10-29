@@ -19,15 +19,17 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@/components/ui/empty";
-import { Field } from "@/components/ui/field";
+import { Field, FieldGroup, FieldSet } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Spinner } from "@/components/ui/spinner";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { WallpaperCard } from "@/components/wallpaper-card";
 import { WallpaperCardDetail } from "@/components/wallpaper-detail";
+import WallpaperFeed from "@/components/wallpaper-feed";
 import { useWallhavenSearch } from "@/features/use-wallhaven";
 import useMasonryColumns from "@/hooks/masonry-columns";
+import { useLoadMoreTrigger } from "@/hooks/use-load-more-trigger";
 import useWallhavenClientParamsStore from "@/hooks/wallhaven-params";
 import { SearchParametersCategories } from "@/types/core/SearchParametersCategories";
 import { SearchParametersSort } from "@/types/core/SearchParametersSort";
@@ -61,28 +63,11 @@ function categoryValuestoCategoryParam(
   return categories;
 }
 
-function useLoadMoreTrigger(
-  onIntersect: () => void,
-  enabled: boolean,
-  root?: React.RefObject<HTMLDivElement | null>,
-) {
-  const ref = useRef<HTMLDivElement>(null);
-  const isInView = useInView(ref, { root, margin: "0px 0px 500px 0px" });
-
-  useEffect(() => {
-    if (isInView && enabled) onIntersect();
-  }, [isInView, enabled, onIntersect]);
-  return ref;
-}
-
 function RouteComponent() {
   const params = useWallhavenClientParamsStore((state) => state.params);
   const updateParams = useWallhavenClientParamsStore(
     (state) => state.updateParams,
   );
-  
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
-    useWallhavenSearch(params);
 
   const [selectedWallpaper, setSelectedWallpaper] = useState<Wallpaper | null>(
     null,
@@ -99,24 +84,18 @@ function RouteComponent() {
     { value: "toplist", label: "Toplist", disabled: false },
   ];
 
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const sentinelRef = useLoadMoreTrigger(
-    fetchNextPage,
-    !!hasNextPage && !isFetchingNextPage,
-    scrollContainerRef,
-  );
-
-  const columns = useMasonryColumns(data?.wallpapers ?? [], 3);
 
   return (
     <div className="flex flex-col gap-4 overflow-hidden h-dvh">
-      <Field orientation="horizontal">
-        <Input
-          placeholder="Search..."
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && updateParams({ q: input })}
-        />
+      <div className="flex items-center gap-1">
+        <Field>
+          <Input
+            placeholder="Search..."
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && updateParams({ q: input })}
+          />
+        </Field>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button size={"icon"}>
@@ -139,70 +118,14 @@ function RouteComponent() {
             ))}
           </DropdownMenuContent>
         </DropdownMenu>
-
         <Button size={"icon"} onClick={() => setIsOptionsDialogOpen(true)}>
           <SlidersHorizontalIcon />
         </Button>
         <Button size={"icon"} onClick={() => updateParams({ q: input })}>
           <MagnifyingGlassIcon />
         </Button>
-      </Field>
-      {!data ? (
-        Array.from({ length: 10 }).map((_, index) => (
-          <Skeleton className="h-36 w-full mb-3" key={index} />
-        ))
-      ) : data && data.pages.length > 0 ? (
-        <LayoutGroup>
-          <div
-            className="overflow-y-auto min-h-0 h-dvh"
-            ref={scrollContainerRef}
-          >
-            <div className="flex flex-1 p-4 gap-3 justify-center">
-              {columns.map((col, i) => (
-                <div key={i} className="gap-4">
-                  <AnimatePresence mode="popLayout">
-                    {col.map((wallpaper) => (
-                      <WallpaperCard
-                        wallpaper={wallpaper}
-                        onClick={() => setSelectedWallpaper(wallpaper)}
-                        key={wallpaper.id}
-                        className="mb-3"
-                      />
-                    ))}
-                  </AnimatePresence>
-                </div>
-              ))}
-            </div>
-
-            <div ref={sentinelRef} className="h-1" />
-
-            <AnimatePresence>
-              {isFetchingNextPage && (
-                <motion.div
-                  key="spinner"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                >
-                  <Spinner />
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-        </LayoutGroup>
-      ) : (
-        <Empty>
-          <EmptyHeader>
-            <EmptyMedia variant={"icon"}>
-              <ImageIcon />
-            </EmptyMedia>
-            <EmptyTitle>No Wallpapers Found.</EmptyTitle>
-            <EmptyDescription>
-              Adjust the search parameters to find new wallpapers
-            </EmptyDescription>
-          </EmptyHeader>
-        </Empty>
-      )}
+      </div>
+      <WallpaperFeed params={params} onSelectWallpaper={setSelectedWallpaper} />
 
       <WallpaperCardDetail
         wallpaper={selectedWallpaper}
