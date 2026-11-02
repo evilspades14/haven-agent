@@ -34,6 +34,7 @@ import {
   TooltipTrigger,
 } from "./ui/tooltip";
 import { Table, TableCell, TableRow } from "./ui/table";
+import { cn } from "cn";
 
 function formatFileSize(size: number): string {
   const sizeInKb = size / 1024;
@@ -143,14 +144,14 @@ export function WallpaperCardDetail({
   if (isDesktop) {
     return (
       <Dialog open={!!wallpaper} onOpenChange={onOpenChange} modal>
-        <DialogContent className="min-w-2xl gap-3">
+        <DialogContent className="min-w-2xl gap-3 max-h-[90vh]">
           <DialogHeader>
             <DialogTitle>{wallpaper?.source}</DialogTitle>
             <DialogDescription>{wallpaper?.short_url}</DialogDescription>
           </DialogHeader>
           <div className="flex items-center">
             {infoPanel}
-            <div className="flex flex-col flex-1 gap-3 w-full h-full">
+            <div className="flex flex-col flex-1 gap-3 w-full h-fit max-h-full min-h-0">
               <WallpaperPanel wallpaper={wallpaper} />
               <div className="grid grid-cols-3 ">
                 <Button>
@@ -189,7 +190,7 @@ export function WallpaperCardDetail({
 
 function WallpaperPanel({ wallpaper }: { wallpaper: Wallpaper | null }) {
   return (
-    <div className="h-fit w-full items-center justify-center overflow-hidden">
+    <div className={cn("h-fit w-full items-center justify-center overflow-hidden")}>
       <img
         src={wallpaper?.path}
         className="max-h-full max-w-full object-contain object-top rounded-md"

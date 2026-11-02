@@ -12,24 +12,11 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  Empty,
-  EmptyDescription,
-  EmptyHeader,
-  EmptyMedia,
-  EmptyTitle,
-} from "@/components/ui/empty";
-import { Field, FieldGroup, FieldSet } from "@/components/ui/field";
+import { Field } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Spinner } from "@/components/ui/spinner";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { WallpaperCard } from "@/components/wallpaper-card";
 import { WallpaperCardDetail } from "@/components/wallpaper-detail";
 import WallpaperFeed from "@/components/wallpaper-feed";
-import { useWallhavenSearch } from "@/features/use-wallhaven";
-import useMasonryColumns from "@/hooks/masonry-columns";
-import { useLoadMoreTrigger } from "@/hooks/use-load-more-trigger";
 import useWallhavenClientParamsStore from "@/hooks/wallhaven-params";
 import { SearchParametersCategories } from "@/types/core/SearchParametersCategories";
 import { SearchParametersSort } from "@/types/core/SearchParametersSort";
@@ -37,7 +24,6 @@ import { Wallpaper } from "@/types/core/Wallpaper";
 import {
   CubeIcon,
   HandPeaceIcon,
-  ImageIcon,
   MagnifyingGlassIcon,
   SlidersHorizontalIcon,
   SortAscendingIcon,
@@ -45,9 +31,7 @@ import {
 } from "@phosphor-icons/react";
 import { CheckCircleIcon } from "@phosphor-icons/react/dist/ssr";
 import { createFileRoute } from "@tanstack/react-router";
-import { AnimatePresence, LayoutGroup, motion, useInView } from "motion/react";
-import React from "react";
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 
 export const Route = createFileRoute("/")({
   component: RouteComponent,
@@ -83,7 +67,6 @@ function RouteComponent() {
     { value: "favorites", label: "Favorites", disabled: false },
     { value: "toplist", label: "Toplist", disabled: false },
   ];
-
 
   return (
     <div className="flex flex-col gap-4 overflow-hidden h-dvh">

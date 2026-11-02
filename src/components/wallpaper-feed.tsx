@@ -20,12 +20,13 @@ import { Skeleton } from "./ui/skeleton";
 export type WallpaperFeedProps = {
   onSelectWallpaper?: (wallpaper: Wallpaper) => void;
   params: Partial<SearchParameters>;
+  columns?: number;
 };
 
-function WallpaperFeed(props: WallpaperFeedProps) {
+function WallpaperFeed({ columns = 3, ...props }: WallpaperFeedProps) {
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
     useWallhavenSearch(props.params);
-  const columns = useMasonryColumns(data?.wallpapers ?? [], 3);
+  const feedColumns = useMasonryColumns(data?.wallpapers ?? [], columns);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const sentinelRef = useLoadMoreTrigger(
     fetchNextPage,
@@ -63,7 +64,7 @@ function WallpaperFeed(props: WallpaperFeedProps) {
     <LayoutGroup>
       <div className="overflow-y-auto min-h-0 h-dvh" ref={scrollContainerRef}>
         <div className="flex flex-1 p-4 gap-3 justify-center">
-          {columns.map((col, i) => (
+          {feedColumns.map((col, i) => (
             <div key={i} className="gap-4">
               <AnimatePresence mode="popLayout">
                 {col.map((wallpaper) => (
