@@ -17,6 +17,7 @@ import { Input } from "@/components/ui/input";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { WallpaperCardDetail } from "@/components/wallpaper-detail";
 import WallpaperFeed from "@/components/wallpaper-feed";
+import { useMediaQuery } from "@/hooks/media-query";
 import useWallhavenClientParamsStore from "@/hooks/wallhaven-params";
 import { SearchParametersCategories } from "@/types/core/SearchParametersCategories";
 import { SearchParametersSort } from "@/types/core/SearchParametersSort";
@@ -68,6 +69,9 @@ function RouteComponent() {
     { value: "toplist", label: "Toplist", disabled: false },
   ];
 
+  const isDesktop = useMediaQuery("(min-width: 768px)");
+  const columns = isDesktop ? 3 : 2;
+
   return (
     <div className="flex flex-col gap-4 overflow-hidden h-dvh">
       <div className="flex items-center gap-1">
@@ -108,7 +112,11 @@ function RouteComponent() {
           <MagnifyingGlassIcon />
         </Button>
       </div>
-      <WallpaperFeed params={params} onSelectWallpaper={setSelectedWallpaper} />
+      <WallpaperFeed
+        params={params}
+        onSelectWallpaper={setSelectedWallpaper}
+        columns={columns}
+      />
 
       <WallpaperCardDetail
         wallpaper={selectedWallpaper}
