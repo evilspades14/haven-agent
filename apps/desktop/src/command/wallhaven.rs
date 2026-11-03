@@ -1,6 +1,6 @@
 use tauri::{State, command};
 use tokio::sync::Mutex;
-use wallhaven::{client::model::{CollectionsParams, CollectionsResponse, SearchParameters, SearchResponse}, error::CommandError};
+use wallhaven::{client::model::{CollectionsParams, CollectionsResponse, ListCollectionParams, SearchParameters, SearchResponse}, error::CommandError};
 
 use crate::state::state::AppState;
 
@@ -26,6 +26,19 @@ pub async fn user_collections(
     state
         .wallhaven_client
         .user_collections(params)
+        .await
+        .map_err(|e| e.into())
+}
+
+#[command]
+pub async fn list_collection(
+    state: State<'_, Mutex<AppState>>,
+    params: ListCollectionParams,
+) -> Result<SearchResponse, CommandError> {
+    let state = state.lock().await;
+    state
+        .wallhaven_client
+        .list_collection(params)
         .await
         .map_err(|e| e.into())
 }

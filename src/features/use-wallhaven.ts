@@ -1,4 +1,5 @@
 import WallhavenAPIService from "@/services/WallhavenAPIService";
+import { ListCollectionParams } from "@/types/core/ListCollectionParams";
 import { SearchParameters } from "@/types/core/SearchParameters";
 import { SearchResponse } from "@/types/core/SearchResponse";
 import {
@@ -14,7 +15,10 @@ export const wallhavenQueryKeys = {
     params,
   ],
   collections: () => [...wallhavenQueryKeys.all(), "collections"],
-  // collection: (id: string) =>
+  collection: (params: ListCollectionParams) => [
+    ...wallhavenQueryKeys.collections(),
+    params,
+  ],
 };
 
 export function useWallhavenSearch(params: Partial<SearchParameters>) {
@@ -37,6 +41,14 @@ export function useUserCollections({ apiKey }: { apiKey: string | undefined }) {
   return useQuery({
     queryKey: wallhavenQueryKeys.collections(),
     queryFn: () => WallhavenAPIService.getUserCollections({ apikey: apiKey! }),
-    enabled: !!apiKey
+    enabled: !!apiKey,
+  });
+}
+
+export function useCollection(params: ListCollectionParams) {
+  return useQuery({
+    queryKey: wallhavenQueryKeys.collection(params),
+    queryFn: () => WallhavenAPIService.listCollection(params),
+    enabled: !!params.apikey && !!params.collection_id && !!params.username,
   });
 }

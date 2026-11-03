@@ -1,5 +1,5 @@
 import { SearchParameters } from "@/types/core/SearchParameters";
-import { defaultSearchParamters } from "@/types/default/defaultSearchParameters";
+import { defaultSearchParameters } from "@/types/default/defaultSearchParameters";
 import { create } from "zustand";
 
 export type WallhavenClientParamsStoreState = {
@@ -9,7 +9,7 @@ export type WallhavenClientParamsStoreState = {
 
 const useWallhavenClientParamsStore = create<WallhavenClientParamsStoreState>(
   (set) => ({
-    params: { ...defaultSearchParamters() },
+    params: { ...defaultSearchParameters() },
     updateParams: (update) =>
       set((prev) => ({ params: { ...prev.params, ...update } })),
   }),

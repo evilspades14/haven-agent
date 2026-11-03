@@ -4,6 +4,7 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -50,13 +51,8 @@ export type WallpaperCardDetailProps = {
   onOpenChange: (open: boolean) => void;
 };
 
-export function WallpaperCardDetail({
-  wallpaper,
-  onOpenChange,
-}: WallpaperCardDetailProps) {
-  const isDesktop = useMediaQuery("(min-width: 768px)");
-
-  const infoPanel = (
+function WallpaperInfoPanel({ wallpaper }: { wallpaper: Wallpaper | null }) {
+  return (
     <TooltipProvider disableHoverableContent>
       <div className="flex flex-col typography overflow-y-scroll">
         <Table className="overflow-y-scroll">
@@ -140,34 +136,35 @@ export function WallpaperCardDetail({
       </div>
     </TooltipProvider>
   );
+}
+
+export function WallpaperCardDetail({
+  wallpaper,
+  onOpenChange,
+}: WallpaperCardDetailProps) {
+  const isDesktop = useMediaQuery("(min-width: 768px)");
 
   if (isDesktop) {
     return (
       <Dialog open={!!wallpaper} onOpenChange={onOpenChange} modal>
-        <DialogContent className="min-w-2xl gap-3 max-h-[90vh]">
+        <DialogContent className="gap-3 h-full max-h-[90vh] max-w-[95vw] overflow-y-scroll">
           <DialogHeader>
             <DialogTitle>{wallpaper?.source}</DialogTitle>
             <DialogDescription>{wallpaper?.short_url}</DialogDescription>
           </DialogHeader>
-          <div className="flex items-center">
-            {infoPanel}
-            <div className="flex flex-col flex-1 gap-3 w-full h-fit max-h-full min-h-0">
-              <WallpaperPanel wallpaper={wallpaper} />
-              <div className="grid grid-cols-3 ">
-                <Button>
-                  <DownloadIcon /> Save
-                </Button>
-                <Button>
-                  <HeartIcon /> Favorite
-                </Button>
-                <Button
-                  onClick={() => wallpaper?.url && openUrl(wallpaper.url)}
-                >
-                  <ArrowSquareOutIcon /> Open
-                </Button>
-              </div>
-            </div>
-          </div>
+          <WallpaperPanel wallpaper={wallpaper} />
+          <WallpaperInfoPanel wallpaper={wallpaper} />
+          <DialogFooter className="grid grid-cols-3">
+            <Button>
+              <DownloadIcon /> Save
+            </Button>
+            <Button>
+              <HeartIcon /> Favorite
+            </Button>
+            <Button onClick={() => wallpaper?.url && openUrl(wallpaper.url)}>
+              <ArrowSquareOutIcon /> Open
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     );
@@ -181,7 +178,7 @@ export function WallpaperCardDetail({
         </DrawerHeader>
         <div className="p-6 overflow-y-scroll">
           <WallpaperPanel wallpaper={wallpaper} />
-          {infoPanel}
+          <WallpaperInfoPanel wallpaper={wallpaper} />
         </div>
       </DrawerContent>
     </Drawer>
@@ -190,7 +187,9 @@ export function WallpaperCardDetail({
 
 function WallpaperPanel({ wallpaper }: { wallpaper: Wallpaper | null }) {
   return (
-    <div className={cn("h-fit w-full items-center justify-center overflow-hidden")}>
+    <div
+      className={cn("h-fit w-full items-center justify-center overflow-hidden")}
+    >
       <img
         src={wallpaper?.path}
         className="max-h-full max-w-full object-contain object-top rounded-md"

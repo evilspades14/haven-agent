@@ -1,6 +1,6 @@
 import { SearchParameters } from "../core/SearchParameters";
 
-export function defaultSearchParamters(): SearchParameters {
+export function defaultSearchParameters(): SearchParameters {
     return {
         q: null,
         atleast: null,

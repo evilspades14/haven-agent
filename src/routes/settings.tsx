@@ -28,7 +28,7 @@ export const Route = createFileRoute("/settings")({
 function RouteComponent() {
   const [apiKeyInput, setApiKeyInput] = useState<string>("");
   const [usernameInput, setUsernameInput] = useState<string>("");
-  const [_apiKey, updateApiKey, _apiKeyReady] = useStoreValue<
+  const [apiKey, updateApiKey, _apiKeyReady] = useStoreValue<
     string | undefined
   >("apiKey", undefined);
   const [username, updateUsername, _usernameReady] = useStoreValue<
@@ -66,6 +66,7 @@ function RouteComponent() {
                   onChange={(e) => setUsernameInput(e.target.value)}
                   type="text"
                   placeholder={username}
+                  defaultValue={username}
                 />
               </Field>
               <Field>
@@ -73,19 +74,20 @@ function RouteComponent() {
                 <FieldDescription>
                   Use a Wallhaven API key for more features.{" "}
                   <a
-                    className="inline-flex items-center"
+                    className="inline-flex items-center cursor-pointer"
                     onClick={() =>
                       openUrl("https://wallhaven.cc/settings/account")
                     }
                   >
-                    Get yours here <ArrowUpRightIcon />
+                    Get your key here <ArrowUpRightIcon />
                   </a>{" "}
                 </FieldDescription>
                 <Input
                   value={apiKeyInput}
                   onChange={(e) => setApiKeyInput(e.target.value)}
-                  type="text"
+                  type="password"
                   placeholder="*****"
+                  defaultValue={apiKey}
                 />
               </Field>
             </div>

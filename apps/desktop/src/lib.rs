@@ -32,7 +32,8 @@ pub fn run() {
         .plugin(tauri_plugin_opener::init())
         .invoke_handler(tauri::generate_handler![
             command::wallhaven::wallpaper_search,
-            command::wallhaven::user_collections
+            command::wallhaven::user_collections,
+            command::wallhaven::list_collection
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

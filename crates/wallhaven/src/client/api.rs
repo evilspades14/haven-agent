@@ -1,9 +1,13 @@
-use std::time::Duration;
+use std::{collections::HashMap, time::Duration};
 
 use reqwest::Client;
+use serde_json::json;
 
 use crate::{
-    client::model::{CollectionsParams, CollectionsResponse, SearchParameters, SearchResponse},
+    client::model::{
+        CollectionsParams, CollectionsResponse, ListCollectionParams, SearchParameters,
+        SearchResponse, SettingsParams, SettingsResponse,
+    },
     error::SafeError,
 };
 pub struct WallHavenAPIClient {
@@ -53,9 +57,39 @@ impl WallHavenAPIClient {
         Ok(data)
     }
 
-    // pub async fn list_collection(&self, params) {
-    //     
-    // }
+    pub async fn list_collection(
+        &self,
+        params: ListCollectionParams,
+    ) -> Result<SearchResponse, SafeError> {
+        let ListCollectionParams { username, api_key, collection_id } = params;
+        let path = format!("/v1/collections/{username}/{collection_id}");
+        let query = json!({
+            "apikey": api_key
+        });
+        let result = self
+            .client
+            .get(format!("{}{}", self.base_url, path))
+            .query(&query)
+            .send()
+            .await?;
+        let data = result.json::<SearchResponse>().await?;
+        Ok(data)
+    }
+
+    pub async fn user_settings(
+        &self,
+        params: SettingsParams,
+    ) -> Result<SettingsResponse, SafeError> {
+        let path = "/v1/settings";
+        let result = self
+            .client
+            .get(format!("{}{}", self.base_url, path))
+            .query(&params)
+            .send()
+            .await?;
+        let data = result.json::<SettingsResponse>().await?;
+        Ok(data)
+    }
 }
 
 pub struct WallHavenAPIClientBuilder {

@@ -17,7 +17,6 @@ import { Input } from "@/components/ui/input";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { WallpaperCardDetail } from "@/components/wallpaper-detail";
 import WallpaperFeed from "@/components/wallpaper-feed";
-import { useMediaQuery } from "@/hooks/media-query";
 import useWallhavenClientParamsStore from "@/hooks/wallhaven-params";
 import { SearchParametersCategories } from "@/types/core/SearchParametersCategories";
 import { SearchParametersSort } from "@/types/core/SearchParametersSort";
@@ -32,6 +31,7 @@ import {
 } from "@phosphor-icons/react";
 import { CheckCircleIcon } from "@phosphor-icons/react/dist/ssr";
 import { createFileRoute } from "@tanstack/react-router";
+import React from "react";
 import { useState } from "react";
 
 export const Route = createFileRoute("/")({
@@ -68,9 +68,6 @@ function RouteComponent() {
     { value: "favorites", label: "Favorites", disabled: false },
     { value: "toplist", label: "Toplist", disabled: false },
   ];
-
-  const isDesktop = useMediaQuery("(min-width: 768px)");
-  const columns = isDesktop ? 3 : 2;
 
   return (
     <div className="flex flex-col gap-4 overflow-hidden h-dvh">
@@ -112,11 +109,7 @@ function RouteComponent() {
           <MagnifyingGlassIcon />
         </Button>
       </div>
-      <WallpaperFeed
-        params={params}
-        onSelectWallpaper={setSelectedWallpaper}
-        columns={columns}
-      />
+      <WallpaperFeed params={params} onSelectWallpaper={setSelectedWallpaper} />
 
       <WallpaperCardDetail
         wallpaper={selectedWallpaper}
@@ -139,13 +132,13 @@ function RouteComponent() {
             }
           >
             <ToggleGroupItem value={"general"} aria-label="General">
-              <CubeIcon />
+              <CubeIcon /> General
             </ToggleGroupItem>
             <ToggleGroupItem value={"people"} aria-label="People">
-              <UserIcon />
+              <UserIcon /> People
             </ToggleGroupItem>
             <ToggleGroupItem value={"anime"} aria-label="Anime">
-              <HandPeaceIcon />
+              <HandPeaceIcon /> Anime
             </ToggleGroupItem>
           </ToggleGroup>
         </DialogContent>

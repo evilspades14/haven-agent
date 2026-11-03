@@ -1,4 +1,4 @@
-use std::str::FromStr;
+use std::{collections::HashSet, str::FromStr};
 
 use serde::{Deserialize, Serialize};
 use ts_rs::TS;
@@ -61,7 +61,7 @@ pub enum SearchParametersOrder {
     Asc,
 }
 
-#[derive(Serialize, Deserialize, Default, Debug, TS)]
+#[derive(Serialize, Deserialize, Default, Debug, TS, Clone)]
 pub enum SearchParametersTopRange {
     #[serde(rename = "1d")]
     OneDay,
@@ -225,13 +225,22 @@ pub struct SearchResponse {
     meta: Meta,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, TS)]
+#[derive(Debug, Clone, Serialize, Deserialize, TS, PartialEq, Eq, Hash)]
 #[serde(rename_all = "lowercase")]
 #[ts(export)]
 pub enum Purity {
     Sfw,
     Sketchy,
     Nsfw,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, TS, PartialEq, Eq, Hash)]
+#[serde(rename_all = "lowercase")]
+#[ts(export)]
+pub enum Category {
+    General,
+    People,
+    Anime,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, TS)]
@@ -243,7 +252,7 @@ pub struct Wallpaper {
     pub favorites: u64,
     pub source: String,
     pub purity: Purity,
-    pub category: String,
+    pub category: Category,
     pub dimension_x: u32,
     pub dimension_y: u32,
     pub resolution: String,
@@ -282,11 +291,42 @@ pub struct CollectionsResponse {
 #[derive(Debug, Clone, Serialize, Deserialize, TS)]
 #[ts(export)]
 pub struct CollectionsParams {
-    apikey: String,
+    #[serde(rename = "apikey")]
+    api_key: String,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, TS)]
 #[ts(export)]
 pub struct ListCollectionParams {
-    collection_id: String
+    #[serde(rename = "apikey")]
+    pub api_key: String,
+    pub username: String,
+    pub collection_id: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, TS)]
+#[ts(export)]
+pub struct SettingsParams {
+    #[serde(rename = "apikey")]
+    api_key: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, TS)]
+#[ts(export)]
+pub struct SettingsData {
+    thumb_size: String,
+    per_page: String,
+    purity: HashSet<Purity>,
+    categories: HashSet<Category>,
+    resolutions: HashSet<String>,
+    aspect_ratios: HashSet<String>,
+    toplist_range: SearchParametersTopRange,
+    tag_blacklist: HashSet<String>,
+    user_blacklist: HashSet<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, TS)]
+#[ts(export)]
+pub struct SettingsResponse {
+    data: SettingsData,
 }
