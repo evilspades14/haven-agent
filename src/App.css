@@ -245,6 +245,14 @@ button {
     }
 }
 
+@layer utilities {
+    .settings-card {
+        width: 100%;
+        max-width: var(--container-2xl);
+        margin-inline: auto;
+    }
+}
+
 ::-webkit-scrollbar {
     height: 5px;
     width: 5px;

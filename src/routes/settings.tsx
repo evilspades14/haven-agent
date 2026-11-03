@@ -35,24 +35,29 @@ function RouteComponent() {
     string | undefined
   >("username", undefined);
 
+  const updateSettings = async () =>
+    toast
+      .promise(
+        async () => {
+          await updateUsername(usernameInput);
+          await updateApiKey(apiKeyInput);
+        },
+        {
+          success: "Username updated.",
+          error: "Failed to update username.",
+        },
+      )
+      .unwrap();
+
   return (
-    <div className="flex flex-col gap-3">
-      <Card>
+    <div className="flex flex-col gap-3 justify-center h-dvh">
+      <Card className="settings-card">
         <CardHeader>
-          <CardTitle>API Credentials</CardTitle>
-          <CardDescription>
-            Use a Wallhaven API key for more features.{" "}
-            <a
-              className="inline-flex items-center"
-              onClick={() => openUrl("https://wallhaven.cc/settings/account")}
-            >
-              Get yours here <ArrowUpRightIcon />
-            </a>{" "}
-          </CardDescription>
+          <CardTitle>Wallhaven Credentials</CardTitle>
         </CardHeader>
         <CardContent>
           <FieldGroup>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid gap-3">
               <Field>
                 <FieldLabel>Username</FieldLabel>
                 <FieldDescription>Wallhaven Username</FieldDescription>
@@ -85,19 +90,15 @@ function RouteComponent() {
               </Field>
             </div>
           </FieldGroup>
-          <Button
-            onClick={async () => {
-              toast.promise(async () => updateUsername(usernameInput), {
-                success: "Username updated.",
-                error: "Failed to update username.",
-              });
-            }}
-          >
+          
+        </CardContent>
+        <CardFooter>
+          <Button onClick={updateSettings}>
             <CircleWavyCheckIcon /> Save
           </Button>
-        </CardContent>
+        </CardFooter>
       </Card>
-      <Card>
+      <Card className="settings-card">
         <CardHeader>
           <CardTitle>Theme</CardTitle>
           <CardDescription></CardDescription>

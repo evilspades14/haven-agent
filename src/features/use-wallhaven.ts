@@ -33,7 +33,7 @@ export function useWallhavenSearch(params: Partial<SearchParameters>) {
   });
 }
 
-export function useUserCollections({ apiKey }: { apiKey: string | null }) {
+export function useUserCollections({ apiKey }: { apiKey: string | undefined }) {
   return useQuery({
     queryKey: wallhavenQueryKeys.collections(),
     queryFn: () => WallhavenAPIService.getUserCollections({ apikey: apiKey! }),

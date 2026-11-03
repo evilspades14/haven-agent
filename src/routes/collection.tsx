@@ -6,15 +6,9 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@/components/ui/empty";
-import {
-  Item,
-  ItemContent,
-  ItemHeader,
-  ItemMedia,
-  ItemTitle,
-} from "@/components/ui/item";
+import { Item, ItemContent, ItemMedia, ItemTitle } from "@/components/ui/item";
 import { useUserCollections } from "@/features/use-wallhaven";
-import { useSettings } from "@/hooks/use-settings";
+import { useStoreValue } from "@/hooks/use-settings";
 import { ImageIcon, StackIcon } from "@phosphor-icons/react";
 import { createFileRoute } from "@tanstack/react-router";
 
@@ -23,11 +17,14 @@ export const Route = createFileRoute("/collection")({
 });
 
 function RouteComponent() {
-  const { apiKey } = useSettings();
+  const [apiKey, updateApiKey, apiKeyReady] = useStoreValue<string | undefined>(
+    "apiKey",
+    undefined,
+  );
   const { data } = useUserCollections({ apiKey });
   if (!apiKey)
     return (
-      <div>
+      <div className="h-dvh justify-center">
         <Empty>
           <EmptyHeader></EmptyHeader>
           <EmptyContent>No API Key found!</EmptyContent>
@@ -35,7 +32,7 @@ function RouteComponent() {
       </div>
     );
   return (
-    <div>
+    <div className="h-dvh">
       {data?.data && data.data?.length > 0 ? (
         <div className="flex">
           <div className="gap-3">
@@ -50,9 +47,7 @@ function RouteComponent() {
               </Item>
             ))}
           </div>
-          <div>
-            
-          </div>
+          <div></div>
         </div>
       ) : (
         <Empty>
