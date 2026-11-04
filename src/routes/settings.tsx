@@ -26,14 +26,15 @@ export const Route = createFileRoute("/settings")({
 });
 
 function RouteComponent() {
-  const [apiKeyInput, setApiKeyInput] = useState<string>("");
-  const [usernameInput, setUsernameInput] = useState<string>("");
   const [apiKey, updateApiKey, _apiKeyReady] = useStoreValue<
     string | undefined
   >("apiKey", undefined);
-  const [username, updateUsername, _usernameReady] = useStoreValue<
+  const [username, updateUsername, usernameReady] = useStoreValue<
     string | undefined
   >("username", undefined);
+  const [apiKeyInput, setApiKeyInput] = useState<string | undefined>(apiKey);
+  const [usernameInput, setUsernameInput] = useState<string | undefined>(username);
+  
 
   const updateSettings = async () =>
     toast
@@ -66,7 +67,7 @@ function RouteComponent() {
                   onChange={(e) => setUsernameInput(e.target.value)}
                   type="text"
                   placeholder={username}
-                  defaultValue={username}
+                  defaultValue={usernameReady ? username : undefined}
                 />
               </Field>
               <Field>
