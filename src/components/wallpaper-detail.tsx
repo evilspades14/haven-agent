@@ -11,6 +11,7 @@ import {
 import {
   Drawer,
   DrawerContent,
+  DrawerFooter,
   DrawerHeader,
   DrawerTitle,
 } from "@/components/ui/drawer";
@@ -37,6 +38,7 @@ import {
 import { Table, TableCell, TableRow } from "./ui/table";
 import { cn } from "cn";
 import { useDownload } from "@/hooks/use-download";
+import { Progress } from "./ui/progress";
 
 function formatFileSize(size: number): string {
   const sizeInKb = size / 1024;
@@ -146,7 +148,7 @@ export function WallpaperCardDetail({
   onOpenChange,
 }: WallpaperCardDetailProps) {
   const isDesktop = useMediaQuery("(min-width: 768px)");
-  const { start } = useDownload();
+  const { start, percent, status } = useDownload();
 
   if (isDesktop) {
     return (
@@ -159,8 +161,19 @@ export function WallpaperCardDetail({
           <WallpaperPanel wallpaper={wallpaper} />
           <WallpaperInfoPanel wallpaper={wallpaper} />
           <DialogFooter className="grid grid-cols-3">
-            <Button>
-              <DownloadIcon /> Save
+            <Button
+              disabled={!wallpaper}
+              onClick={async () =>
+                wallpaper && start(wallpaper?.path, wallpaper?.id)
+              }
+            >
+              {status === "downloading" ? (
+                <Progress value={percent} />
+              ) : (
+                <>
+                  <DownloadIcon /> Save
+                </>
+              )}
             </Button>
             <Button>
               <HeartIcon /> Favorite
@@ -184,6 +197,31 @@ export function WallpaperCardDetail({
           <WallpaperPanel wallpaper={wallpaper} />
           <WallpaperInfoPanel wallpaper={wallpaper} />
         </div>
+        <DrawerFooter>
+          <div className="flex gap-3 items-center w-full">
+            <Button
+              disabled={!wallpaper}
+              onClick={async () =>
+                wallpaper && start(wallpaper?.path, wallpaper?.id)
+              }
+              className="flex-1"
+            >
+              {status === "downloading" ? (
+                <Progress value={percent} />
+              ) : (
+                <>
+                  <DownloadIcon /> Save
+                </>
+              )}
+            </Button>
+            <Button className="flex-1">
+              <HeartIcon /> Favorite
+            </Button>
+          </div>
+          <Button onClick={() => wallpaper?.url && openUrl(wallpaper.url)}>
+            <ArrowSquareOutIcon /> Open
+          </Button>
+        </DrawerFooter>
       </DrawerContent>
     </Drawer>
   );

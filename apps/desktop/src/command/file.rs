@@ -28,7 +28,6 @@ pub async fn download_file(
         .send(DownloadEvent::Started { total: resp.content_length() })
         .map_err(|e| e.to_string())?;
 
-    // Write to a temp file, then rename, so a failed download never leaves a corrupt file
     let tmp = format!("{dest}.part");
     let mut file = tokio::fs::File::create(&tmp).await.map_err(|e| e.to_string())?;
     let mut stream = resp.bytes_stream();
