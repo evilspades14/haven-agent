@@ -54,8 +54,8 @@ export type WallpaperCardDetailProps = {
 function WallpaperInfoPanel({ wallpaper }: { wallpaper: Wallpaper | null }) {
   return (
     <TooltipProvider disableHoverableContent>
-      <div className="flex flex-col typography overflow-y-scroll">
-        <Table className="overflow-y-scroll">
+      <div className="flex flex-col typography">
+        <Table>
           <Tooltip>
             <TooltipTrigger asChild>
               <TableRow>
@@ -124,15 +124,17 @@ function WallpaperInfoPanel({ wallpaper }: { wallpaper: Wallpaper | null }) {
           </Tooltip>
         </Table>
         <div className="flex w-full">
-          {wallpaper?.colors.map((color) => (
+          {wallpaper?.colors.map((color, idx) => (
             <div
               style={{ backgroundColor: color }}
-              className={`bg-${color} h-4 w-full rounded-full`}
+              className={cn(
+                `bg-${color} h-4 w-full`,
+                idx === 0 && "rounded-l-full",
+                idx === wallpaper?.colors.length - 1 && "rounded-r-full",
+              )}
             ></div>
           ))}
         </div>
-        {/*{wallpaper?.purity && <PurityBadge purity={wallpaper?.purity} />}*/}
-        {/*<div>Created At: {wallpaper?.created_at}</div>*/}
       </div>
     </TooltipProvider>
   );

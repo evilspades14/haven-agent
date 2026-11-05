@@ -1,6 +1,12 @@
-use tauri::{State, command};
+use tauri::{command, State};
 use tokio::sync::Mutex;
-use wallhaven::{client::model::{CollectionsParams, CollectionsResponse, ListCollectionParams, SearchParameters, SearchResponse}, error::CommandError};
+use wallhaven::{
+    client::model::{
+        CollectionsParams, CollectionsResponse, ListCollectionParams, SearchParameters,
+        SearchResponse,
+    },
+    error::CommandError,
+};
 
 use crate::state::state::AppState;
 

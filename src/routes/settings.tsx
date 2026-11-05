@@ -33,22 +33,21 @@ function RouteComponent() {
     string | undefined
   >("username", undefined);
   const [apiKeyInput, setApiKeyInput] = useState<string | undefined>(apiKey);
-  const [usernameInput, setUsernameInput] = useState<string | undefined>(username);
-  
+  const [usernameInput, setUsernameInput] = useState<string | undefined>(
+    username,
+  );
 
   const updateSettings = async () =>
-    toast
-      .promise(
-        async () => {
-          await updateUsername(usernameInput);
-          await updateApiKey(apiKeyInput);
-        },
-        {
-          success: "Username updated.",
-          error: "Failed to update username.",
-        },
-      )
-      .unwrap();
+    toast.promise(
+      async () => {
+        await updateUsername(usernameInput);
+        await updateApiKey(apiKeyInput);
+      },
+      {
+        success: "Username updated.",
+        error: "Failed to update username.",
+      },
+    );
 
   return (
     <div className="flex flex-col gap-3 justify-center h-dvh">
@@ -93,7 +92,6 @@ function RouteComponent() {
               </Field>
             </div>
           </FieldGroup>
-          
         </CardContent>
         <CardFooter>
           <Button onClick={updateSettings}>
