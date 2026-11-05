@@ -1,15 +1,18 @@
 import { DownloadEvent } from "@/types/core/DownloadEvent";
-import { Channel } from "@tauri-apps/api/core";
+import { Channel, invoke } from "@tauri-apps/api/core";
 import { save } from '@tauri-apps/plugin-dialog';
 
-async function download(url: string, suggestedName: string) {
+export async function downloadFile(
+  url: string,
+  suggestedName: string,
+  onEvent: (e: DownloadEvent) => void,
+): Promise<string | null> {
   const dest = await save({ defaultPath: suggestedName });
-  if (!dest) return;
+  if (!dest) return null;
 
   const channel = new Channel<DownloadEvent>();
-  channel.onmessage = (msg) => {
-    if (msg.event === 'progress') setProgress(msg.data.downloaded);
-  };
+  channel.onmessage = onEvent;
 
   await invoke('download_file', { url, dest, onEvent: channel });
+  return dest;
 }

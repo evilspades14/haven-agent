@@ -3,4 +3,4 @@ import type { Category } from "./Category";
 import type { Purity } from "./Purity";
 import type { Thumbs } from "./Thumbs";
 
-export type Wallpaper = { id: string, url: string, short_url: string, views: bigint, favorites: bigint, source: string, purity: Purity, category: Category, dimension_x: number, dimension_y: number, resolution: string, ratio: string, file_size: bigint, file_type: string, created_at: string, colors: Array<string>, path: string, thumbs: Thumbs, };
+export type Wallpaper = { id: string, url: string, short_url: string, views: number, favorites: number, source: string, purity: Purity, category: Category, dimension_x: number, dimension_y: number, resolution: string, ratio: string, file_size: number, file_type: string, created_at: string, colors: Array<string>, path: string, thumbs: Thumbs, };

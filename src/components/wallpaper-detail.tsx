@@ -36,6 +36,7 @@ import {
 } from "./ui/tooltip";
 import { Table, TableCell, TableRow } from "./ui/table";
 import { cn } from "cn";
+import { useDownload } from "@/hooks/use-download";
 
 function formatFileSize(size: number): string {
   const sizeInKb = size / 1024;
@@ -145,6 +146,7 @@ export function WallpaperCardDetail({
   onOpenChange,
 }: WallpaperCardDetailProps) {
   const isDesktop = useMediaQuery("(min-width: 768px)");
+  const { start } = useDownload();
 
   if (isDesktop) {
     return (
