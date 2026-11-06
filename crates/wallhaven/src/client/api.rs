@@ -1,6 +1,7 @@
 use std::{collections::HashMap, time::Duration};
 
 use reqwest::Client;
+use scraper::{Html, Selector};
 use serde_json::json;
 
 use crate::{
@@ -10,9 +11,12 @@ use crate::{
     },
     error::SafeError,
 };
+
+const WEB: &str = "https://wallhaven.cc";
+const API: &str = "https://wallhaven.cc/api";
+
 pub struct WallHavenAPIClient {
     client: Client,
-    base_url: String,
 }
 
 impl WallHavenAPIClient {
@@ -23,7 +27,7 @@ impl WallHavenAPIClient {
         let path = "/v1/search";
         let result = self
             .client
-            .get(format!("{}{}", self.base_url, path))
+            .get(format!("{}{}", API, path))
             .query(&params)
             .send()
             .await?;
@@ -33,11 +37,7 @@ impl WallHavenAPIClient {
 
     pub async fn wallpaper_info(&self, id: String) -> Result<SearchResponse, SafeError> {
         let path = format!("{}/{}", "/w", id);
-        let result = self
-            .client
-            .get(format!("{}{}", self.base_url, path))
-            .send()
-            .await?;
+        let result = self.client.get(format!("{}{}", API, path)).send().await?;
         let data = result.json::<SearchResponse>().await?;
         Ok(data)
     }
@@ -49,7 +49,7 @@ impl WallHavenAPIClient {
         let path = "/v1/collections";
         let result = self
             .client
-            .get(format!("{}{}", self.base_url, path))
+            .get(format!("{}{}", API, path))
             .query(&params)
             .send()
             .await?;
@@ -61,14 +61,18 @@ impl WallHavenAPIClient {
         &self,
         params: ListCollectionParams,
     ) -> Result<SearchResponse, SafeError> {
-        let ListCollectionParams { username, api_key, collection_id } = params;
+        let ListCollectionParams {
+            username,
+            api_key,
+            collection_id,
+        } = params;
         let path = format!("/v1/collections/{username}/{collection_id}");
         let query = json!({
             "apikey": api_key
         });
         let result = self
             .client
-            .get(format!("{}{}", self.base_url, path))
+            .get(format!("{}{}", API, path))
             .query(&query)
             .send()
             .await?;
@@ -83,31 +87,60 @@ impl WallHavenAPIClient {
         let path = "/v1/settings";
         let result = self
             .client
-            .get(format!("{}{}", self.base_url, path))
+            .get(format!("{}{}", API, path))
             .query(&params)
             .send()
             .await?;
         let data = result.json::<SettingsResponse>().await?;
         Ok(data)
     }
+
+    async fn csrf_token(&self, path: &str) -> anyhow::Result<String> {
+        let html = self
+            .client
+            .get(format!("{WEB}{path}"))
+            .send()
+            .await?
+            .text()
+            .await?;
+        let doc = Html::parse_document(&html);
+        // selector is a guess: check where the token actually lives
+        let sel = Selector::parse("meta[name=csrf-token]").unwrap();
+        let tok = doc
+            .select(&sel)
+            .next()
+            .and_then(|e| e.value().attr("content"))
+            .ok_or_else(|| anyhow::anyhow!("csrf token not found"))?;
+        Ok(tok.to_string())
+    }
+
+    pub async fn add_to_collection(&self, wp_id: &str, collection_id: u64) -> anyhow::Result<()> {
+        let token = self.csrf_token(&format!("/w/{wp_id}")).await?;
+        // method, path, and body: copy from your HAR capture
+        let _resp = self
+            .client
+            .post(format!("{WEB}/REPLACE_WITH_CAPTURED_PATH"))
+            .header("X-CSRF-TOKEN", token)
+            .form(&[
+                ("wallpaper", wp_id),
+                ("collection", &collection_id.to_string()),
+            ])
+            .send()
+            .await?
+            .error_for_status()?;
+        Ok(())
+    }
 }
 
-pub struct WallHavenAPIClientBuilder {
-    base_url: String,
-}
+pub struct WallHavenAPIClientBuilder;
 
 impl WallHavenAPIClientBuilder {
-    pub fn new(base_url: impl Into<String>) -> Self {
-        WallHavenAPIClientBuilder {
-            base_url: base_url.into(),
-        }
+    pub fn new() -> Self {
+        WallHavenAPIClientBuilder {}
     }
 
     pub fn build(self) -> Result<WallHavenAPIClient, SafeError> {
         let client = Client::builder().timeout(Duration::from_secs(20)).build()?;
-        Ok(WallHavenAPIClient {
-            client,
-            base_url: self.base_url,
-        })
+        Ok(WallHavenAPIClient { client })
     }
 }
