@@ -46,7 +46,6 @@ function RouteComponent() {
         </Empty>
       </div>
     );
-  console.log(collection);
   return (
     <div className="h-dvh">
       {data?.data && data.data?.length > 0 ? (
@@ -57,6 +56,7 @@ function RouteComponent() {
                 variant={"outline"}
                 className="select-none cursor-pointer"
                 onClick={() => setSelectedCollectionId(collection.id)}
+                key={collection.id}
               >
                 <ItemMedia variant={"icon"}>
                   <StackIcon />
