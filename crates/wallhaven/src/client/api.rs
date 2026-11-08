@@ -1,5 +1,6 @@
 use std::{collections::HashMap, time::Duration};
 
+use moka::sync::Cache;
 use reqwest::Client;
 use scraper::{Html, Selector};
 use serde_json::json;
@@ -17,6 +18,7 @@ const API: &str = "https://wallhaven.cc/api";
 
 pub struct WallHavenAPIClient {
     client: Client,
+    query_cache: Cache<SearchParameters, SearchResponse>,
 }
 
 impl WallHavenAPIClient {
@@ -24,15 +26,20 @@ impl WallHavenAPIClient {
         &self,
         params: SearchParameters,
     ) -> Result<SearchResponse, SafeError> {
-        let path = "/v1/search";
-        let result = self
-            .client
-            .get(format!("{}{}", API, path))
-            .query(&params)
-            .send()
-            .await?;
-        let data = result.json::<SearchResponse>().await?;
-        Ok(data)
+        match self.query_cache.get(&params) {
+            Some(data) => Ok(data),
+            None => {
+                let path = "/v1/search";
+                let result = self
+                    .client
+                    .get(format!("{}{}", API, path))
+                    .query(&params)
+                    .send()
+                    .await?;
+                let data = result.json::<SearchResponse>().await?;
+                Ok(data)
+            },
+        }
     }
 
     pub async fn wallpaper_info(&self, id: String) -> Result<SearchResponse, SafeError> {
@@ -141,6 +148,13 @@ impl WallHavenAPIClientBuilder {
 
     pub fn build(self) -> Result<WallHavenAPIClient, SafeError> {
         let client = Client::builder().timeout(Duration::from_secs(20)).build()?;
-        Ok(WallHavenAPIClient { client })
+        let query_cache = Cache::builder()
+            .max_capacity(64 * 1024 * 1024)
+            .time_to_live(Duration::from_secs(60))
+            .build();
+        Ok(WallHavenAPIClient {
+            client,
+            query_cache,
+        })
     }
 }

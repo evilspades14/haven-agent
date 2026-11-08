@@ -14,3 +14,4 @@ log = { workspace = true }
 anyhow = "1.0.104"
 governor = "0.10.4"
 scraper = "0.29.0"
+moka = { version = "0.12.16", features = ["sync"] }

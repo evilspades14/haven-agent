@@ -67,7 +67,7 @@ function WallpaperFeed({ columns = 3, ...props }: WallpaperFeedProps) {
           {feedColumns.map((col, i) => (
             <div key={i} className="gap-4">
               <AnimatePresence mode="popLayout">
-                {col.map((wallpaper, j) => (
+                {col.map((wallpaper) => (
                   <WallpaperCard
                     wallpaper={wallpaper}
                     onClick={() => props.onSelectWallpaper?.(wallpaper)}

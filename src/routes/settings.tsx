@@ -14,8 +14,23 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import {
+  Item,
+  ItemActions,
+  ItemContent,
+  ItemHeader,
+  ItemTitle,
+} from "@/components/ui/item";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { Theme, useTheme } from "@/context/theme-provider";
 import { useStoreValue } from "@/hooks/use-settings";
-import { ArrowUpRightIcon, CircleWavyCheckIcon } from "@phosphor-icons/react";
+import {
+  ArrowUpRightIcon,
+  CircleWavyCheckIcon,
+  DesktopIcon,
+  MoonIcon,
+  SunDimIcon,
+} from "@phosphor-icons/react";
 import { createFileRoute } from "@tanstack/react-router";
 import { openUrl } from "@tauri-apps/plugin-opener";
 import { useState } from "react";
@@ -36,6 +51,7 @@ function RouteComponent() {
   const [usernameInput, setUsernameInput] = useState<string | undefined>(
     username,
   );
+  const { theme, setTheme } = useTheme();
 
   const updateSettings = async () =>
     toast.promise(
@@ -50,7 +66,7 @@ function RouteComponent() {
     );
 
   return (
-    <div className="flex flex-col gap-3 justify-center h-dvh">
+    <div className="flex flex-col gap-3 h-dvh">
       <Card className="settings-card">
         <CardHeader>
           <CardTitle>Wallhaven Credentials</CardTitle>
@@ -102,9 +118,33 @@ function RouteComponent() {
       <Card className="settings-card">
         <CardHeader>
           <CardTitle>Theme</CardTitle>
-          <CardDescription></CardDescription>
+          <CardDescription>Customize application appearance</CardDescription>
         </CardHeader>
-        <CardContent></CardContent>
+        <CardContent>
+          <Item variant={"muted"}>
+            <ItemContent>
+              <ItemTitle>Mode</ItemTitle>
+            </ItemContent>
+            <ItemActions>
+              <ToggleGroup
+                type="single"
+                variant={"outline"}
+                value={theme ?? "system"}
+                onValueChange={(value) => !!value && setTheme(value as Theme)}
+              >
+                <ToggleGroupItem value={"light"} size={"sm"}>
+                  <SunDimIcon />
+                </ToggleGroupItem>
+                <ToggleGroupItem value={"dark"} size={"sm"}>
+                  <MoonIcon />
+                </ToggleGroupItem>
+                <ToggleGroupItem value={"system"} size={"sm"}>
+                  <DesktopIcon />
+                </ToggleGroupItem>
+              </ToggleGroup>
+            </ItemActions>
+          </Item>
+        </CardContent>
       </Card>
     </div>
   );
