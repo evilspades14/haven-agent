@@ -160,7 +160,7 @@ export function WallpaperCardDetail({
           </DialogHeader>
           <WallpaperPanel wallpaper={wallpaper} className="flex-1" />
           <WallpaperInfoPanel wallpaper={wallpaper} />
-          <DialogFooter className="grid grid-cols-3">
+          <DialogFooter className="grid grid-cols-2">
             <Button
               disabled={!wallpaper}
               onClick={async () =>
@@ -175,9 +175,9 @@ export function WallpaperCardDetail({
                 </>
               )}
             </Button>
-            <Button>
+            {/*<Button>
               <HeartIcon /> Favorite
-            </Button>
+            </Button>*/}
             <Button onClick={() => wallpaper?.url && openUrl(wallpaper.url)}>
               <ArrowSquareOutIcon /> Open
             </Button>
@@ -214,9 +214,9 @@ export function WallpaperCardDetail({
                 </>
               )}
             </Button>
-            <Button className="flex-1">
+            {/*<Button className="flex-1">
               <HeartIcon /> Favorite
-            </Button>
+            </Button>*/}
           </div>
           <Button onClick={() => wallpaper?.url && openUrl(wallpaper.url)}>
             <ArrowSquareOutIcon /> Open
