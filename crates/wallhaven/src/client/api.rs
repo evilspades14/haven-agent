@@ -1,5 +1,10 @@
-use std::{collections::HashMap, time::Duration};
+use std::{num::NonZeroU32, sync::Arc, time::Duration};
 
+use governor::{
+    Quota, RateLimiter,
+    clock::DefaultClock,
+    state::{InMemoryState, NotKeyed},
+};
 use moka::sync::Cache;
 use reqwest::Client;
 use scraper::{Html, Selector};
@@ -18,7 +23,9 @@ const API: &str = "https://wallhaven.cc/api";
 
 pub struct WallHavenAPIClient {
     client: Client,
-    query_cache: Cache<SearchParameters, SearchResponse>,
+    search_cache: Cache<SearchParameters, SearchResponse>,
+    detail_cache: Cache<String, SearchResponse>,
+    limiter: Arc<RateLimiter<NotKeyed, InMemoryState, DefaultClock>>,
 }
 
 impl WallHavenAPIClient {
@@ -26,7 +33,8 @@ impl WallHavenAPIClient {
         &self,
         params: SearchParameters,
     ) -> Result<SearchResponse, SafeError> {
-        match self.query_cache.get(&params) {
+        self.limiter.until_ready().await;
+        match self.search_cache.get(&params) {
             Some(data) => Ok(data),
             None => {
                 let path = "/v1/search";
@@ -37,22 +45,31 @@ impl WallHavenAPIClient {
                     .send()
                     .await?;
                 let data = result.json::<SearchResponse>().await?;
+                self.search_cache.insert(params, data.clone());
                 Ok(data)
-            },
+            }
         }
     }
 
     pub async fn wallpaper_info(&self, id: String) -> Result<SearchResponse, SafeError> {
-        let path = format!("{}/{}", "/w", id);
-        let result = self.client.get(format!("{}{}", API, path)).send().await?;
-        let data = result.json::<SearchResponse>().await?;
-        Ok(data)
+        self.limiter.until_ready().await;
+        match self.detail_cache.get(&id) {
+            Some(detail) => Ok(detail),
+            None => {
+                let path = format!("{}/{}", "/w", id);
+                let result = self.client.get(format!("{}{}", API, path)).send().await?;
+                let data = result.json::<SearchResponse>().await?;
+                self.detail_cache.insert(id, data.clone());
+                Ok(data)
+            }
+        }
     }
 
     pub async fn user_collections(
         &self,
         params: CollectionsParams,
     ) -> Result<CollectionsResponse, SafeError> {
+        self.limiter.until_ready().await;
         let path = "/v1/collections";
         let result = self
             .client
@@ -68,6 +85,7 @@ impl WallHavenAPIClient {
         &self,
         params: ListCollectionParams,
     ) -> Result<SearchResponse, SafeError> {
+        self.limiter.until_ready().await;
         let ListCollectionParams {
             username,
             api_key,
@@ -91,6 +109,7 @@ impl WallHavenAPIClient {
         &self,
         params: SettingsParams,
     ) -> Result<SettingsResponse, SafeError> {
+        self.limiter.until_ready().await;
         let path = "/v1/settings";
         let result = self
             .client
@@ -148,13 +167,22 @@ impl WallHavenAPIClientBuilder {
 
     pub fn build(self) -> Result<WallHavenAPIClient, SafeError> {
         let client = Client::builder().timeout(Duration::from_secs(20)).build()?;
-        let query_cache = Cache::builder()
+        let search_cache = Cache::builder()
             .max_capacity(64 * 1024 * 1024)
             .time_to_live(Duration::from_secs(60))
             .build();
+        let detail_cache = Cache::builder()
+            .max_capacity(64 * 1024 * 1024)
+            .time_to_live(Duration::from_secs(60))
+            .build();
+        let limiter = Arc::new(RateLimiter::direct(Quota::per_minute(
+            NonZeroU32::new(45).unwrap(),
+        )));
         Ok(WallHavenAPIClient {
             client,
-            query_cache,
+            search_cache,
+            detail_cache,
+            limiter,
         })
     }
 }

@@ -18,7 +18,6 @@ import {
   Item,
   ItemActions,
   ItemContent,
-  ItemHeader,
   ItemTitle,
 } from "@/components/ui/item";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
@@ -66,7 +65,7 @@ function RouteComponent() {
     );
 
   return (
-    <div className="flex flex-col gap-3 h-dvh">
+    <div className="flex flex-col gap-3 h-dvh overflow-y-auto">
       <Card className="settings-card">
         <CardHeader>
           <CardTitle>Wallhaven Credentials</CardTitle>

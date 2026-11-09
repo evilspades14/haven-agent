@@ -169,28 +169,48 @@ impl Serialize for SearchParametersColor {
 #[serde(rename_all = "camelCase")]
 #[ts(export)]
 pub struct SearchParameters {
+    /// Search query - Your main way of finding what you're looking for
     #[serde(skip_serializing_if = "Option::is_none")]
     q: Option<String>,
+    /// Turn categories on(1) or off(0)
     #[serde(skip_serializing_if = "Option::is_none")]
     categories: Option<SearchParametersCategories>,
+    /// Turn purities on(1) or off(0)
+    /// 
+    /// NSFW requires a valid API key
     #[serde(skip_serializing_if = "Option::is_none")]
     purity: Option<SearchParametersPurities>,
+    /// Method of sorting results
     #[serde(skip_serializing_if = "Option::is_none")]
     sorting: Option<SearchParametersSort>,
+    /// Sorting order
     #[serde(skip_serializing_if = "Option::is_none")]
     order: Option<SearchParametersOrder>,
+    /// Sorting MUST be set to 'toplist'
     #[serde(skip_serializing_if = "Option::is_none")]
     top_range: Option<SearchParametersTopRange>,
+    /// Minimum resolution allowed
     #[serde(skip_serializing_if = "Option::is_none")]
     atleast: Option<Resolution>,
+    /// List of exact wallpaper resolutions
+    /// 
+    /// Single resolution allowed
     #[serde(skip_serializing_if = "Option::is_none")]
     resolutions: Option<Vec<Resolution>>,
+    /// List of aspect ratios
+    /// 
+    /// Single ratio allowed
     #[serde(skip_serializing_if = "Option::is_none")]
     ratios: Option<Vec<AspectRatio>>,
+    /// Search by color
     #[serde(skip_serializing_if = "Option::is_none")]
     colors: Option<Vec<SearchParametersColor>>,
+    /// Pagination
+    /// 
+    /// Not actually infinite
     #[serde(skip_serializing_if = "Option::is_none")]
     page: Option<u32>,
+    /// Optional seed for random results
     #[serde(skip_serializing_if = "Option::is_none")]
     seed: Option<String>,
 }

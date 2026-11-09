@@ -54,10 +54,10 @@ export type WallpaperCardDetailProps = {
   onOpenChange: (open: boolean) => void;
 };
 
-function WallpaperInfoPanel({ wallpaper }: { wallpaper: Wallpaper | null }) {
+function WallpaperInfoPanel({ wallpaper, className }: { wallpaper: Wallpaper | null, className?: string }) {
   return (
     <TooltipProvider disableHoverableContent>
-      <div className="flex flex-col typography">
+      <div className="flex flex-col typography select-none">
         <Table>
           <Tooltip>
             <TooltipTrigger asChild>
@@ -153,12 +153,12 @@ export function WallpaperCardDetail({
   if (isDesktop) {
     return (
       <Dialog open={!!wallpaper} onOpenChange={onOpenChange} modal>
-        <DialogContent className="gap-3 h-full max-h-[90vh] max-w-[95vw] overflow-y-scroll">
+        <DialogContent className="gap-3 h-full max-h-[90vh] max-w-[95vw] min-w-[90vw] overflow-y-scroll">
           <DialogHeader>
             <DialogTitle>{wallpaper?.source}</DialogTitle>
             <DialogDescription>{wallpaper?.short_url}</DialogDescription>
           </DialogHeader>
-          <WallpaperPanel wallpaper={wallpaper} />
+          <WallpaperPanel wallpaper={wallpaper} className="flex-1" />
           <WallpaperInfoPanel wallpaper={wallpaper} />
           <DialogFooter className="grid grid-cols-3">
             <Button
@@ -227,14 +227,14 @@ export function WallpaperCardDetail({
   );
 }
 
-function WallpaperPanel({ wallpaper }: { wallpaper: Wallpaper | null }) {
+function WallpaperPanel({ wallpaper, className }: { wallpaper: Wallpaper | null, className?: string }) {
   return (
     <div
-      className={cn("h-fit w-full items-center justify-center overflow-hidden")}
+      className={cn("max-h-full max-w-full h-full w-full items-center justify-center overflow-hidden bg-background rounded-md", className)}
     >
       <img
         src={wallpaper?.path}
-        className="max-h-full max-w-full object-contain object-top rounded-md"
+        className="max-h-full max-w-full h-full w-full object-contain object-top"
         alt=""
         width={wallpaper?.dimension_x}
         height={wallpaper?.dimension_y}

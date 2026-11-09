@@ -1,4 +1,3 @@
-import { useInView } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 
 export function useLoadMoreTrigger(

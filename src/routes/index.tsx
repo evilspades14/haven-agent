@@ -17,6 +17,7 @@ import { Input } from "@/components/ui/input";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { WallpaperCardDetail } from "@/components/wallpaper-detail";
 import WallpaperFeed from "@/components/wallpaper-feed";
+import { useMediaQuery } from "@/hooks/media-query";
 import useWallhavenClientParamsStore from "@/hooks/wallhaven-params";
 import { SearchParametersCategories } from "@/types/core/SearchParametersCategories";
 import { SearchParametersSort } from "@/types/core/SearchParametersSort";
@@ -31,8 +32,7 @@ import {
 } from "@phosphor-icons/react";
 import { CheckCircleIcon } from "@phosphor-icons/react/dist/ssr";
 import { createFileRoute } from "@tanstack/react-router";
-import React from "react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export const Route = createFileRoute("/")({
   component: RouteComponent,
@@ -53,10 +53,10 @@ function RouteComponent() {
   const updateParams = useWallhavenClientParamsStore(
     (state) => state.updateParams,
   );
-
   const [selectedWallpaper, setSelectedWallpaper] = useState<Wallpaper | null>(
     null,
   );
+
   const [input, setInput] = useState(params.q ?? "");
   const [isOptionsDialogOpen, setIsOptionsDialogOpen] = useState(false);
 
@@ -68,6 +68,9 @@ function RouteComponent() {
     { value: "favorites", label: "Favorites", disabled: false },
     { value: "toplist", label: "Toplist", disabled: false },
   ];
+
+  const isDesktop = useMediaQuery("(min-width: 768px)");
+  const feedColumns = isDesktop ? 3 : 2;
 
   return (
     <div className="flex flex-col gap-4 overflow-hidden h-dvh">
@@ -93,6 +96,7 @@ function RouteComponent() {
                   updateParams({ sorting: opt.value as SearchParametersSort })
                 }
                 disabled={opt.disabled}
+                key={opt.value}
               >
                 {opt.label}
                 {params.sorting === opt.value && (
@@ -105,11 +109,12 @@ function RouteComponent() {
         <Button size={"icon"} onClick={() => setIsOptionsDialogOpen(true)}>
           <SlidersHorizontalIcon />
         </Button>
-        <Button size={"icon"} onClick={() => updateParams({ q: input })}>
-          <MagnifyingGlassIcon />
-        </Button>
       </div>
-      <WallpaperFeed params={params} onSelectWallpaper={setSelectedWallpaper} />
+      <WallpaperFeed
+        params={params}
+        onSelectWallpaper={setSelectedWallpaper}
+        columns={feedColumns}
+      />
 
       <WallpaperCardDetail
         wallpaper={selectedWallpaper}
@@ -126,6 +131,7 @@ function RouteComponent() {
             type="multiple"
             value={Object.keys(params.categories ?? {}).filter((cat) => cat)}
             onValueChange={(value: Array<keyof SearchParametersCategories>) =>
+              !!value &&
               updateParams({
                 categories: categoryValuestoCategoryParam(value),
               })

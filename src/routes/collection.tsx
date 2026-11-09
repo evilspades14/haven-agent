@@ -8,7 +8,6 @@ import {
 } from "@/components/ui/empty";
 import { Item, ItemContent, ItemMedia, ItemTitle } from "@/components/ui/item";
 import { WallpaperCard } from "@/components/wallpaper-card";
-import WallpaperFeed from "@/components/wallpaper-feed";
 import { useCollection, useUserCollections } from "@/features/use-wallhaven";
 import { useStoreValue } from "@/hooks/use-settings";
 import { ImageIcon, StackIcon } from "@phosphor-icons/react";
@@ -21,11 +20,11 @@ export const Route = createFileRoute("/collection")({
 });
 
 function RouteComponent() {
-  const [apiKey, updateApiKey, apiKeyReady] = useStoreValue<string | undefined>(
+  const [apiKey, _updateApiKey, _apiKeyReady] = useStoreValue<string | undefined>(
     "apiKey",
     undefined,
   );
-  const [username, updateUsername, usernameReady] = useStoreValue<
+  const [username, _updateUsername, _usernameReady] = useStoreValue<
     string | undefined
   >("username", undefined);
   const [selectedCollectionId, setSelectedCollectionId] = useState<

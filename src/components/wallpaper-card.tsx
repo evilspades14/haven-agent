@@ -21,6 +21,7 @@ export function WallpaperCard({
       onClick={onClick}
       className={cn(
         "rounded-md outline overflow-hidden select-none break-inside-avoid cursor-pointer",
+        wallpaper.purity === "sketchy" && "outline-destructive outline-2",
         className,
       )}
       style={{

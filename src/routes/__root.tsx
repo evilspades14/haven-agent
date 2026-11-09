@@ -83,7 +83,7 @@ function BottomNav() {
             >
               <Link to={tab.link}>
                 <Icon
-                  className={`relative h-5 w-5 transition-all duration-200 ease-out`}
+                  className={`relative size-full transition-all duration-200 ease-out`}
                 />
               </Link>
             </Button>
@@ -132,7 +132,7 @@ function Root() {
   } else {
     return (
       <div className="flex-1 max-h-dvh p-6 overflow-hidden pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]">
-        <main className="relative min-h-0 min-w-0 flex-1">
+        <main className="relative min-h-0 min-w-0 py-6">
           <Outlet />
         </main>
         <BottomNav />

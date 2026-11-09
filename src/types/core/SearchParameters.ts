@@ -8,4 +8,60 @@ import type { SearchParametersPurities } from "./SearchParametersPurities";
 import type { SearchParametersSort } from "./SearchParametersSort";
 import type { SearchParametersTopRange } from "./SearchParametersTopRange";
 
-export type SearchParameters = { q: string | null, categories: SearchParametersCategories | null, purity: SearchParametersPurities | null, sorting: SearchParametersSort | null, order: SearchParametersOrder | null, topRange: SearchParametersTopRange | null, atleast: Resolution | null, resolutions: Array<Resolution> | null, ratios: Array<AspectRatio> | null, colors: Array<SearchParametersColor> | null, page: number | null, seed: string | null, };
+export type SearchParameters = { 
+/**
+ * Search query - Your main way of finding what you're looking for
+ */
+q: string | null, 
+/**
+ * Turn categories on(1) or off(0)
+ */
+categories: SearchParametersCategories | null, 
+/**
+ * Turn purities on(1) or off(0)
+ * 
+ * NSFW requires a valid API key
+ */
+purity: SearchParametersPurities | null, 
+/**
+ * Method of sorting results
+ */
+sorting: SearchParametersSort | null, 
+/**
+ * Sorting order
+ */
+order: SearchParametersOrder | null, 
+/**
+ * Sorting MUST be set to 'toplist'
+ */
+topRange: SearchParametersTopRange | null, 
+/**
+ * Minimum resolution allowed
+ */
+atleast: Resolution | null, 
+/**
+ * List of exact wallpaper resolutions
+ * 
+ * Single resolution allowed
+ */
+resolutions: Array<Resolution> | null, 
+/**
+ * List of aspect ratios
+ * 
+ * Single ratio allowed
+ */
+ratios: Array<AspectRatio> | null, 
+/**
+ * Search by color
+ */
+colors: Array<SearchParametersColor> | null, 
+/**
+ * Pagination
+ * 
+ * Not actually infinite
+ */
+page: number | null, 
+/**
+ * Optional seed for random results
+ */
+seed: string | null, };
