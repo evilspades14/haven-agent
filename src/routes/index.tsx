@@ -12,7 +12,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Field } from "@/components/ui/field";
+import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { WallpaperCardDetail } from "@/components/wallpaper-detail";
@@ -27,6 +27,10 @@ import {
   HandPeaceIcon,
   MagnifyingGlassIcon,
   SlidersHorizontalIcon,
+  SmileyIcon,
+  SmileyMeltingIcon,
+  SmileyWinkIcon,
+  SmileyXEyesIcon,
   SortAscendingIcon,
   UserIcon,
 } from "@phosphor-icons/react";
@@ -38,14 +42,22 @@ export const Route = createFileRoute("/")({
   component: RouteComponent,
 });
 
-function categoryValuestoCategoryParam(
-  values: Array<keyof SearchParametersCategories>,
-): SearchParametersCategories {
-  let categories = {} as SearchParametersCategories;
+function categoryValuestoCategoryParam<T extends Record<string, boolean>>(
+  values: Array<keyof T>,
+): T {
+  let categories = {} as T;
   values.forEach((val) => {
     categories[val] = true;
   });
   return categories;
+}
+
+function objParamToArray<T extends Record<string, boolean>>(
+  obj: T,
+): Array<keyof T & string> {
+  return (Object.keys(obj) as Array<keyof T & string>).filter(
+    (key) => obj[key],
+  );
 }
 
 function RouteComponent() {
@@ -127,26 +139,59 @@ function RouteComponent() {
             <DialogTitle>Search Options</DialogTitle>
             <DialogDescription></DialogDescription>
           </DialogHeader>
-          <ToggleGroup
-            type="multiple"
-            value={Object.keys(params.categories ?? {}).filter((cat) => cat)}
-            onValueChange={(value: Array<keyof SearchParametersCategories>) =>
-              !!value &&
-              updateParams({
-                categories: categoryValuestoCategoryParam(value),
-              })
-            }
-          >
-            <ToggleGroupItem value={"general"} aria-label="General">
-              <CubeIcon /> General
-            </ToggleGroupItem>
-            <ToggleGroupItem value={"people"} aria-label="People">
-              <UserIcon /> People
-            </ToggleGroupItem>
-            <ToggleGroupItem value={"anime"} aria-label="Anime">
-              <HandPeaceIcon /> Anime
-            </ToggleGroupItem>
-          </ToggleGroup>
+          <FieldGroup>
+            <Field>
+              <FieldLabel>Category</FieldLabel>
+              <ToggleGroup
+                type="multiple"
+                value={objParamToArray(params?.categories ?? {})}
+                onValueChange={(
+                  value: Array<keyof SearchParametersCategories>,
+                ) =>
+                  !!value &&
+                  updateParams({
+                    categories: categoryValuestoCategoryParam(value),
+                  })
+                }
+              >
+                <ToggleGroupItem value={"general"}>
+                  <CubeIcon /> General
+                </ToggleGroupItem>
+                <ToggleGroupItem value={"people"}>
+                  <UserIcon /> People
+                </ToggleGroupItem>
+                <ToggleGroupItem value={"anime"}>
+                  <HandPeaceIcon /> Anime
+                </ToggleGroupItem>
+              </ToggleGroup>
+            </Field>
+            <Field>
+              <FieldLabel>Purity</FieldLabel>
+              <ToggleGroup
+                type="multiple"
+                value={objParamToArray(params?.purity ?? {})}
+                onValueChange={(
+                  value: Array<keyof SearchParametersCategories>,
+                ) =>
+                  !!value &&
+                  updateParams({
+                    // categories: categoryValuestoCategoryParam(value),
+                    purity: categoryValuestoCategoryParam(value),
+                  })
+                }
+              >
+                <ToggleGroupItem value={"sfw"}>
+                  <SmileyIcon /> SFW
+                </ToggleGroupItem>
+                <ToggleGroupItem value={"people"}>
+                  <SmileyMeltingIcon /> SKETCHY
+                </ToggleGroupItem>
+                <ToggleGroupItem value={"anime"}>
+                  <SmileyXEyesIcon /> NSFW
+                </ToggleGroupItem>
+              </ToggleGroup>
+            </Field>
+          </FieldGroup>
         </DialogContent>
       </Dialog>
     </div>
