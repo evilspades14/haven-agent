@@ -29,16 +29,11 @@ import {
   XIcon,
 } from "@phosphor-icons/react";
 import { openUrl } from "@tauri-apps/plugin-opener";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "./ui/tooltip";
 import { Table, TableCell, TableRow } from "./ui/table";
 import { cn } from "cn";
 import { useDownload } from "@/hooks/use-download";
 import { Progress } from "./ui/progress";
+import WallpaperColorBar from "./wallpaper-color-bar";
 
 function formatFileSize(size: number): string {
   const sizeInKb = size / 1024;
@@ -106,18 +101,7 @@ function WallpaperInfoPanel({
           </TableCell>
         </TableRow>
       </Table>
-      <div className="flex w-full">
-        {wallpaper?.colors.map((color, idx) => (
-          <div
-            style={{ backgroundColor: color }}
-            className={cn(
-              `bg-${color} h-4 w-full`,
-              idx === 0 && "rounded-l-full",
-              idx === wallpaper?.colors.length - 1 && "rounded-r-full",
-            )}
-          ></div>
-        ))}
-      </div>
+      <WallpaperColorBar colors={wallpaper?.colors}/>
     </div>
   );
 }

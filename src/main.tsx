@@ -32,7 +32,7 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
       <TooltipProvider>
         <QueryClientProvider client={queryClient}>
           <RouterProvider router={router} context={{ queryClient }} />
-          <Toaster richColors />
+          <Toaster />
         </QueryClientProvider>
       </TooltipProvider>
     </ThemeProvider>

@@ -97,7 +97,7 @@ function RouteComponent() {
         </Field>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button size={"icon"}>
+            <Button size={"icon"} variant={"outline"}>
               <SortAscendingIcon />
             </Button>
           </DropdownMenuTrigger>
@@ -118,7 +118,7 @@ function RouteComponent() {
             ))}
           </DropdownMenuContent>
         </DropdownMenu>
-        <Button size={"icon"} onClick={() => setIsOptionsDialogOpen(true)}>
+        <Button size={"icon"} variant={"outline"} onClick={() => setIsOptionsDialogOpen(true)}>
           <SlidersHorizontalIcon />
         </Button>
       </div>
