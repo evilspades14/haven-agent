@@ -34,6 +34,8 @@ import { cn } from "cn";
 import { useDownload } from "@/hooks/use-download";
 import { Progress } from "./ui/progress";
 import WallpaperColorBar from "./wallpaper-color-bar";
+import { ImageZoom } from "./kibo-ui/image-zoom";
+import { RefObject, useCallback, useRef } from "react";
 
 function formatFileSize(size: number): string {
   const sizeInKb = size / 1024;
@@ -101,7 +103,7 @@ function WallpaperInfoPanel({
           </TableCell>
         </TableRow>
       </Table>
-      <WallpaperColorBar colors={wallpaper?.colors}/>
+      <WallpaperColorBar colors={wallpaper?.colors} />
     </div>
   );
 }
@@ -112,11 +114,17 @@ export function WallpaperCardDetail({
 }: WallpaperCardDetailProps) {
   const isDesktop = useMediaQuery("(min-width: 768px)");
   const { start, percent, status } = useDownload();
+  const zoomedRef = useRef(false);
+  const blockIfZoomed = (e: Event) => {
+    if (zoomedRef.current) e.preventDefault();
+  };
 
   if (isDesktop) {
     return (
       <Dialog open={!!wallpaper} onOpenChange={onOpenChange} modal>
         <DialogContent
+          onEscapeKeyDown={blockIfZoomed}
+          onInteractOutside={blockIfZoomed}
           className={cn(
             "gap-3 h-full max-h-[90vh] max-w-[95vw] min-w-[90vw] overflow-y-scroll",
           )}
@@ -126,7 +134,11 @@ export function WallpaperCardDetail({
             <DialogDescription>{wallpaper?.short_url}</DialogDescription>
           </DialogHeader>
 
-          <WallpaperPanel wallpaper={wallpaper} className="flex-1" />
+          <WallpaperPanel
+            wallpaper={wallpaper}
+            zoomedRef={zoomedRef}
+            className="flex-1"
+          />
           <WallpaperInfoPanel wallpaper={wallpaper} />
           <DialogFooter className="grid grid-cols-2">
             <Button
@@ -162,7 +174,7 @@ export function WallpaperCardDetail({
           <DrawerTitle></DrawerTitle>
         </DrawerHeader>
         <div className="p-6 overflow-y-scroll">
-          <WallpaperPanel wallpaper={wallpaper} />
+          <WallpaperPanel wallpaper={wallpaper} zoomedRef={zoomedRef} />
           <WallpaperInfoPanel wallpaper={wallpaper} />
         </div>
         <DrawerFooter>
@@ -198,24 +210,41 @@ export function WallpaperCardDetail({
 function WallpaperPanel({
   wallpaper,
   className,
+  zoomedRef,
 }: {
   wallpaper: Wallpaper | null;
   className?: string;
+  zoomedRef?: RefObject<boolean>;
 }) {
+  const handleZoomChange = useCallback((zoomed: boolean) => {
+    if (zoomedRef === undefined) return;
+    if (zoomed) {
+      zoomedRef.current = true;
+    } else {
+      // Keep the flag up past the unzoom animation and focus restoration,
+      // so the Escape/click/focus event that closed the zoom is still ignored
+      setTimeout(() => {
+        zoomedRef.current = false;
+      }, 300);
+    }
+  }, []);
+
   return (
     <div
       className={cn(
-        "max-h-full max-w-full h-full w-full items-center justify-center overflow-hidden bg-background rounded-md",
+        "image-slot max-h-full max-w-full h-full w-full items-center justify-center overflow-hidden bg-background rounded-md",
         className,
       )}
     >
+      {/*<ImageZoom onZoomChange={handleZoomChange}>*/}
       <img
         src={wallpaper?.path}
-        className="max-h-full max-w-full h-full w-full object-contain object-top"
+        className="h-full w-full object-contain"
         alt=""
         width={wallpaper?.dimension_x}
         height={wallpaper?.dimension_y}
       />
+      {/*</ImageZoom>*/}
     </div>
   );
 }

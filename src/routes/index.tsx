@@ -1,3 +1,4 @@
+import { ResolutionField } from "@/components/experimental/resolution-field";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -18,6 +19,7 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { WallpaperCardDetail } from "@/components/wallpaper-detail";
 import WallpaperFeed from "@/components/wallpaper-feed";
 import { useMediaQuery } from "@/hooks/media-query";
+import { useStoreValue } from "@/hooks/use-settings";
 import useWallhavenClientParamsStore from "@/hooks/wallhaven-params";
 import { SearchParametersCategories } from "@/types/core/SearchParametersCategories";
 import { SearchParametersSort } from "@/types/core/SearchParametersSort";
@@ -25,18 +27,16 @@ import { Wallpaper } from "@/types/core/Wallpaper";
 import {
   CubeIcon,
   HandPeaceIcon,
-  MagnifyingGlassIcon,
   SlidersHorizontalIcon,
   SmileyIcon,
   SmileyMeltingIcon,
-  SmileyWinkIcon,
   SmileyXEyesIcon,
   SortAscendingIcon,
   UserIcon,
 } from "@phosphor-icons/react";
 import { CheckCircleIcon } from "@phosphor-icons/react/dist/ssr";
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 
 export const Route = createFileRoute("/")({
   component: RouteComponent,
@@ -65,6 +65,9 @@ function RouteComponent() {
   const updateParams = useWallhavenClientParamsStore(
     (state) => state.updateParams,
   );
+  const [apiKey, _updateApiKey, apiKeyReady] = useStoreValue<
+    string | undefined
+  >("apiKey", undefined);
   const [selectedWallpaper, setSelectedWallpaper] = useState<Wallpaper | null>(
     null,
   );
@@ -118,7 +121,11 @@ function RouteComponent() {
             ))}
           </DropdownMenuContent>
         </DropdownMenu>
-        <Button size={"icon"} variant={"outline"} onClick={() => setIsOptionsDialogOpen(true)}>
+        <Button
+          size={"icon"}
+          variant={"outline"}
+          onClick={() => setIsOptionsDialogOpen(true)}
+        >
           <SlidersHorizontalIcon />
         </Button>
       </div>
@@ -186,11 +193,15 @@ function RouteComponent() {
                 <ToggleGroupItem value={"people"}>
                   <SmileyMeltingIcon /> SKETCHY
                 </ToggleGroupItem>
-                <ToggleGroupItem value={"anime"}>
+                <ToggleGroupItem value={"anime"} disabled={!apiKey}>
                   <SmileyXEyesIcon /> NSFW
                 </ToggleGroupItem>
               </ToggleGroup>
             </Field>
+            <ResolutionField
+              value={params?.atleast ?? null}
+              onChange={(value) => updateParams({ ...params, atleast: value })}
+            />
           </FieldGroup>
         </DialogContent>
       </Dialog>

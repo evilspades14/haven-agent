@@ -1,31 +1,24 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import { Lock, LockOpen, X } from "lucide-react"
+import * as React from "react";
+import { Lock, LockOpen, X } from "lucide-react";
 
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Resolution } from "@/types/core/Resolution";
+import { Field, FieldDescription, FieldLabel } from "../ui/field";
 
-/* -------------------------------------------------------------------------- */
-/*  Types & constants                                                          */
-/* -------------------------------------------------------------------------- */
-
-export type Resolution = {
-  width?: number
-  height?: number
-}
-
-const MAX_DIMENSION = 15360 // 16K
-const FRAME = { width: 3840, height: 2160 } // preview frame = 4K
+const MAX_DIMENSION = 15360; // 16K
+const FRAME = { width: 3840, height: 2160 }; // preview frame = 4K
 
 const PRESETS = [
   { label: "HD", width: 1280, height: 720 },
   { label: "Full HD", width: 1920, height: 1080 },
   { label: "QHD", width: 2560, height: 1440 },
   { label: "4K", width: 3840, height: 2160 },
-] as const
+] as const;
 
 const KNOWN_RATIOS: [string, number][] = [
   ["1:1", 1],
@@ -35,45 +28,47 @@ const KNOWN_RATIOS: [string, number][] = [
   ["16:9", 16 / 9],
   ["21:9", 21 / 9],
   ["32:9", 32 / 9],
-]
+];
 
 /* -------------------------------------------------------------------------- */
 /*  Helpers                                                                    */
 /* -------------------------------------------------------------------------- */
 
 function parseDimension(raw: string): number | undefined {
-  const digits = raw.replace(/\D/g, "")
-  if (!digits) return undefined
-  return Math.min(parseInt(digits, 10), MAX_DIMENSION)
+  const digits = raw.replace(/\D/g, "");
+  if (!digits) return undefined;
+  return Math.min(parseInt(digits, 10), MAX_DIMENSION);
 }
 
 function describeRatio(width: number, height: number): string {
-  const ratio = width / height
-  const match = KNOWN_RATIOS.find(([, r]) => Math.abs(r - ratio) / r < 0.015)
-  return match ? match[0] : `${ratio.toFixed(2)}:1`
+  const ratio = width / height;
+  const match = KNOWN_RATIOS.find(([, r]) => Math.abs(r - ratio) / r < 0.015);
+  return match ? match[0] : `${ratio.toFixed(2)}:1`;
 }
 
-function describe({ width, height }: Resolution): string {
-  if (!width && !height) return "Any size"
-  if (width && !height) return `Width at least ${width.toLocaleString()} px`
-  if (!width && height) return `Height at least ${height.toLocaleString()} px`
-  const mp = (width! * height!) / 1_000_000
-  return `${width!.toLocaleString()} × ${height!.toLocaleString()} px · ${mp.toFixed(
-    mp < 10 ? 1 : 0
-  )} MP · ${describeRatio(width!, height!)}`
+function describe(value: Resolution | null): string {
+  if (!value?.width && !value?.height) return "Any size";
+  if (value?.width && !value?.height)
+    return `Width at least ${value?.width.toLocaleString()} px`;
+  if (!value?.width && value?.height)
+    return `Height at least ${value?.height.toLocaleString()} px`;
+  const mp = (value?.width! * value?.height!) / 1_000_000;
+  return `${value?.width!.toLocaleString()} × ${value?.height!.toLocaleString()} px · ${mp.toFixed(
+    mp < 10 ? 1 : 0,
+  )} MP · ${describeRatio(value?.width!, value?.height!)}`;
 }
 
 /* -------------------------------------------------------------------------- */
 /*  Preview: the chosen minimum, drawn to scale inside a 4K frame              */
 /* -------------------------------------------------------------------------- */
 
-function ResolutionPreview({ width, height }: Resolution) {
+function ResolutionPreview({ value }: { value: Resolution | null }) {
   const pct = (value: number | undefined, max: number) =>
-    value ? Math.min((value / max) * 100, 100) : 0
+    value ? Math.min((value / max) * 100, 100) : 0;
 
-  const w = width ? pct(width, FRAME.width) : 100
-  const h = height ? pct(height, FRAME.height) : 100
-  const hasValue = Boolean(width || height)
+  const w = value?.width ? pct(value?.width, FRAME.width) : 100;
+  const h = value?.height ? pct(value?.height, FRAME.height) : 100;
+  const hasValue = Boolean(value?.width || value?.height);
 
   return (
     <div
@@ -100,18 +95,18 @@ function ResolutionPreview({ width, height }: Resolution) {
       <div
         className={cn(
           "absolute left-0 top-0 rounded-br-sm border-b-2 border-r-2 border-primary bg-primary/15 transition-[width,height,opacity] duration-300 ease-out motion-reduce:transition-none",
-          !hasValue && "opacity-0"
+          !hasValue && "opacity-0",
         )}
         style={{ width: `${w}%`, height: `${h}%` }}
       />
 
       {!hasValue && (
-        <span className="absolute inset-0 flex items-center justify-center text-xs text-muted-foreground">
+        <span className="absolute inset-0 flex items-end justify-center text-xs text-muted-foreground">
           No minimum set
         </span>
       )}
     </div>
-  )
+  );
 }
 
 /* -------------------------------------------------------------------------- */
@@ -119,12 +114,12 @@ function ResolutionPreview({ width, height }: Resolution) {
 /* -------------------------------------------------------------------------- */
 
 export interface ResolutionFieldProps {
-  value: Resolution
-  onChange: (value: Resolution) => void
-  label?: string
-  description?: string
-  disabled?: boolean
-  className?: string
+  value: Resolution | null;
+  onChange: (value: Resolution | null) => void;
+  label?: string;
+  description?: string;
+  disabled?: boolean;
+  className?: string;
 }
 
 export function ResolutionField({
@@ -135,77 +130,76 @@ export function ResolutionField({
   disabled,
   className,
 }: ResolutionFieldProps) {
-  const id = React.useId()
-  const [locked, setLocked] = React.useState(false)
-  const ratioRef = React.useRef<number | null>(null)
+  const id = React.useId();
+  const [locked, setLocked] = React.useState(false);
+  const ratioRef = React.useRef<number | null>(null);
 
-  const canLock = Boolean(value.width && value.height)
-  const hasValue = Boolean(value.width || value.height)
+  const canLock = Boolean(value?.width && value.height);
+  const hasValue = Boolean(value?.width || value?.height);
 
   function toggleLock() {
-    if (!locked && value.width && value.height) {
-      ratioRef.current = value.width / value.height
+    if (!locked && value?.width && value.height) {
+      ratioRef.current = value?.width / value.height;
     }
-    setLocked((prev) => !prev)
+    setLocked((prev) => !prev);
   }
 
   function setWidth(width: number | undefined) {
     if (locked && ratioRef.current && width) {
-      onChange({ width, height: Math.round(width / ratioRef.current) })
+      onChange({ width, height: Math.round(width / ratioRef.current) });
     } else {
-      onChange({ ...value, width })
+      onChange({ ...value, width });
     }
   }
 
   function setHeight(height: number | undefined) {
     if (locked && ratioRef.current && height) {
-      onChange({ width: Math.round(height * ratioRef.current), height })
+      onChange({ width: Math.round(height * ratioRef.current), height });
     } else {
-      onChange({ ...value, height })
+      onChange({ ...value, height });
     }
   }
 
   function applyPreset(width: number, height: number) {
-    if (locked) ratioRef.current = width / height
-    onChange({ width, height })
+    if (locked) ratioRef.current = width / height;
+    onChange({ width, height });
   }
 
   function stepOnArrow(
     e: React.KeyboardEvent<HTMLInputElement>,
     current: number | undefined,
-    set: (n: number | undefined) => void
+    set: (n: number | undefined) => void,
   ) {
-    if (e.key !== "ArrowUp" && e.key !== "ArrowDown") return
-    e.preventDefault()
-    const step = e.shiftKey ? 100 : 10
-    const next = (current ?? 0) + (e.key === "ArrowUp" ? step : -step)
-    set(next <= 0 ? undefined : Math.min(next, MAX_DIMENSION))
+    if (e.key !== "ArrowUp" && e.key !== "ArrowDown") return;
+    e.preventDefault();
+    const step = e.shiftKey ? 100 : 10;
+    const next = (current ?? 0) + (e.key === "ArrowUp" ? step : -step);
+    set(next <= 0 ? undefined : Math.min(next, MAX_DIMENSION));
   }
 
   return (
-    <div
+    <Field
       role="group"
       aria-labelledby={`${id}-label`}
       aria-describedby={`${id}-description`}
       className={cn("grid gap-3", className)}
+      orientation={"vertical"}
     >
       <div className="flex items-start justify-between gap-2">
         <div className="grid gap-1">
-          <Label id={`${id}-label`} htmlFor={`${id}-width`}>
+          <FieldLabel id={`${id}-label`} htmlFor={`${id}-width`}>
             {label}
-          </Label>
-          <p id={`${id}-description`} className="text-sm text-muted-foreground">
+          </FieldLabel>
+          <FieldDescription id={`${id}-description`}>
             {description}
-          </p>
+          </FieldDescription>
         </div>
         {hasValue && (
           <Button
             type="button"
             variant="ghost"
-            size="sm"
-            className="-mr-2 h-7 px-2 text-muted-foreground"
             disabled={disabled}
-            onClick={() => onChange({})}
+            onClick={() => onChange(null)}
           >
             <X className="mr-1 h-3.5 w-3.5" />
             Clear
@@ -216,24 +210,24 @@ export function ResolutionField({
       {/* Presets */}
       <div className="flex flex-wrap gap-1.5" role="group" aria-label="Presets">
         {PRESETS.map((p) => {
-          const active = value.width === p.width && value.height === p.height
+          const active = value?.width === p.width && value?.height === p.height;
           return (
             <Button
               key={p.label}
               type="button"
-              size="sm"
+              // size="sm"
               variant={active ? "secondary" : "outline"}
               aria-pressed={active}
               disabled={disabled}
               onClick={() => applyPreset(p.width, p.height)}
-              className={cn("h-8 gap-1.5", active && "border-primary/60")}
+              // className={cn("h-8 gap-1.5", active && "border-primary/60")}
             >
               {p.label}
               <span className="text-xs font-normal text-muted-foreground">
                 {p.height}p
               </span>
             </Button>
-          )
+          );
         })}
       </div>
 
@@ -247,9 +241,9 @@ export function ResolutionField({
             placeholder="Any"
             aria-label="Minimum width in pixels"
             disabled={disabled}
-            value={value.width ?? ""}
+            value={value?.width ?? ""}
             onChange={(e) => setWidth(parseDimension(e.target.value))}
-            onKeyDown={(e) => stepOnArrow(e, value.width, setWidth)}
+            onKeyDown={(e) => stepOnArrow(e, value?.width, setWidth)}
             className="pr-9 tabular-nums"
           />
           <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">
@@ -261,7 +255,6 @@ export function ResolutionField({
           type="button"
           variant="ghost"
           size="icon"
-          className={cn("h-9 w-9 shrink-0", locked && "text-primary")}
           disabled={disabled || (!canLock && !locked)}
           aria-pressed={locked}
           aria-label={locked ? "Unlock aspect ratio" : "Lock aspect ratio"}
@@ -289,9 +282,9 @@ export function ResolutionField({
             placeholder="Any"
             aria-label="Minimum height in pixels"
             disabled={disabled}
-            value={value.height ?? ""}
+            value={value?.height ?? ""}
             onChange={(e) => setHeight(parseDimension(e.target.value))}
-            onKeyDown={(e) => stepOnArrow(e, value.height, setHeight)}
+            onKeyDown={(e) => stepOnArrow(e, value?.height, setHeight)}
             className="pr-9 tabular-nums"
           />
           <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">
@@ -301,15 +294,15 @@ export function ResolutionField({
       </div>
 
       {/* Scale preview + readout */}
-      <ResolutionPreview width={value.width} height={value.height} />
+      <ResolutionPreview value={value} />
       <p
         className="text-sm tabular-nums text-muted-foreground"
         aria-live="polite"
       >
         {describe(value)}
       </p>
-    </div>
-  )
+    </Field>
+  );
 }
 
 /* -------------------------------------------------------------------------- */
