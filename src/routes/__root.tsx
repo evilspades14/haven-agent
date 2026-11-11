@@ -98,7 +98,7 @@ function Root() {
   const isDesktop = useMediaQuery("(min-width: 768px)");
   if (isDesktop) {
     return (
-      <div className="flex-1 h-dvh p-6 overflow-hidden">
+      <div className="flex-1 h-dvh p-6 overflow-hidden gap-3">
         <NavigationMenu>
           <NavigationMenuList>
             <NavigationMenuItem>
@@ -124,7 +124,7 @@ function Root() {
             </NavigationMenuItem>
           </NavigationMenuList>
         </NavigationMenu>
-        <main className="relative min-h-0 min-w-0 flex-1 pt-4">
+        <main className="relative min-h-0 min-w-0 flex-1 p-3">
           <Outlet />
         </main>
       </div>

@@ -197,11 +197,11 @@ export function ResolutionField({
         {hasValue && (
           <Button
             type="button"
-            variant="ghost"
+            variant="outline"
             disabled={disabled}
             onClick={() => onChange(null)}
           >
-            <X className="mr-1 h-3.5 w-3.5" />
+            <X className="h-4 w-4" />
             Clear
           </Button>
         )}

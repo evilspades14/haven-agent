@@ -15,6 +15,13 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { WallpaperCardDetail } from "@/components/wallpaper-detail";
 import WallpaperFeed from "@/components/wallpaper-feed";
@@ -22,7 +29,9 @@ import { useMediaQuery } from "@/hooks/media-query";
 import { useStoreValue } from "@/hooks/use-settings";
 import useWallhavenClientParamsStore from "@/hooks/wallhaven-params";
 import { SearchParametersCategories } from "@/types/core/SearchParametersCategories";
+import { SearchParametersPurities } from "@/types/core/SearchParametersPurities";
 import { SearchParametersSort } from "@/types/core/SearchParametersSort";
+import { SearchParametersTopRange } from "@/types/core/SearchParametersTopRange";
 import { Wallpaper } from "@/types/core/Wallpaper";
 import {
   CubeIcon,
@@ -84,6 +93,17 @@ function RouteComponent() {
     { value: "toplist", label: "Toplist", disabled: false },
   ];
 
+  const topRangeOptions: { value: SearchParametersTopRange; label: String }[] =
+    [
+      { value: "1d", label: "1 Day" },
+      { value: "3d", label: "3 Days" },
+      { value: "1w", label: "1 Week" },
+      { value: "1M", label: "1 Month" },
+      { value: "3M", label: "3 Months" },
+      { value: "6M", label: "6 Months" },
+      { value: "1y", label: "1 Year" },
+    ];
+
   const isDesktop = useMediaQuery("(min-width: 768px)");
   const feedColumns = isDesktop ? 3 : 2;
 
@@ -98,6 +118,23 @@ function RouteComponent() {
             onKeyDown={(e) => e.key === "Enter" && updateParams({ q: input })}
           />
         </Field>
+        {params.sorting === "toplist" && (
+          <Select
+            value={params.topRange}
+            onValueChange={(value) =>
+              updateParams({ topRange: value as SearchParametersTopRange })
+            }
+          >
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {topRangeOptions.map((opt) => (
+                <SelectItem value={opt.value}>{opt.label}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        )}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button size={"icon"} variant={"outline"}>
@@ -139,9 +176,8 @@ function RouteComponent() {
         wallpaper={selectedWallpaper}
         onOpenChange={(open) => !open && setSelectedWallpaper(null)}
       />
-
       <Dialog open={isOptionsDialogOpen} onOpenChange={setIsOptionsDialogOpen}>
-        <DialogContent>
+        <DialogContent className="overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Search Options</DialogTitle>
             <DialogDescription></DialogDescription>
@@ -151,13 +187,18 @@ function RouteComponent() {
               <FieldLabel>Category</FieldLabel>
               <ToggleGroup
                 type="multiple"
+                className="grid grid-cols-3"
+                variant={"outline"}
                 value={objParamToArray(params?.categories ?? {})}
                 onValueChange={(
                   value: Array<keyof SearchParametersCategories>,
                 ) =>
                   !!value &&
                   updateParams({
-                    categories: categoryValuestoCategoryParam(value),
+                    categories:
+                      categoryValuestoCategoryParam<SearchParametersCategories>(
+                        value,
+                      ),
                   })
                 }
               >
@@ -176,14 +217,18 @@ function RouteComponent() {
               <FieldLabel>Purity</FieldLabel>
               <ToggleGroup
                 type="multiple"
+                className="grid grid-cols-3"
+                variant={"outline"}
                 value={objParamToArray(params?.purity ?? {})}
                 onValueChange={(
                   value: Array<keyof SearchParametersCategories>,
                 ) =>
                   !!value &&
                   updateParams({
-                    // categories: categoryValuestoCategoryParam(value),
-                    purity: categoryValuestoCategoryParam(value),
+                    purity:
+                      categoryValuestoCategoryParam<SearchParametersPurities>(
+                        value,
+                      ),
                   })
                 }
               >
@@ -200,8 +245,9 @@ function RouteComponent() {
             </Field>
             <ResolutionField
               value={params?.atleast ?? null}
-              onChange={(value) => updateParams({ ...params, atleast: value })}
+              onChange={(value) => updateParams({ atleast: value })}
             />
+            {/*{params.ratios}*/}
           </FieldGroup>
         </DialogContent>
       </Dialog>
