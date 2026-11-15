@@ -25,6 +25,7 @@ import {
   FileArchiveIcon,
   FileIcon,
   HeartIcon,
+  Icon,
   PercentIcon,
   XIcon,
 } from "@phosphor-icons/react";
@@ -34,8 +35,15 @@ import { cn } from "cn";
 import { useDownload } from "@/hooks/use-download";
 import { Progress } from "./ui/progress";
 import WallpaperColorBar from "./wallpaper-color-bar";
-import { ImageZoom } from "./kibo-ui/image-zoom";
-import { RefObject, useCallback, useRef } from "react";
+import { ReactNode, RefObject, useCallback, useRef } from "react";
+import {
+  Item,
+  ItemActions,
+  ItemContent,
+  ItemHeader,
+  ItemMedia,
+  ItemTitle,
+} from "./ui/item";
 
 function formatFileSize(size: number): string {
   const sizeInKb = size / 1024;
@@ -51,6 +59,32 @@ export type WallpaperCardDetailProps = {
   onOpenChange: (open: boolean) => void;
 };
 
+const wallpaperInfoFields: (wallpaper: Wallpaper) => {
+  icon: Icon;
+  label: string;
+  value: ReactNode;
+}[] = (wallpaper: Wallpaper) => [
+  { icon: EyeIcon, label: "Views", value: wallpaper.views },
+  { icon: HeartIcon, label: "Favorites", value: wallpaper.favorites },
+  {
+    icon: FileArchiveIcon,
+    label: "File Size",
+    value: formatFileSize(wallpaper.file_size),
+  },
+  { icon: FileIcon, label: "File Type", value: wallpaper.file_type },
+  {
+    icon: PercentIcon,
+    label: "Resolution",
+    value: (
+      <div className="flex items-center justify-end gap-1">
+        {wallpaper?.dimension_x}
+        <XIcon />
+        {wallpaper?.dimension_y}
+      </div>
+    ),
+  },
+];
+
 function WallpaperInfoPanel({
   wallpaper,
   className,
@@ -59,8 +93,24 @@ function WallpaperInfoPanel({
   className?: string;
 }) {
   return (
-    <div className="flex flex-col typography select-none gap-3">
-      <Table>
+    <div className="flex flex-col select-none gap-3">
+      <div className="flex flex-wrap gap-1.5">
+        {wallpaper &&
+          wallpaperInfoFields(wallpaper).map((wp) => (
+            <Item size={"xs"} variant={"muted"} className="flex-1 min-w-64">
+              <ItemMedia variant={"icon"}>
+                <wp.icon />
+              </ItemMedia>
+
+              <ItemContent>
+                <ItemTitle>{wp.label}</ItemTitle>
+              </ItemContent>
+              <ItemActions className="font-mono">{wp.value}</ItemActions>
+            </Item>
+          ))}
+      </div>
+
+      {/*<Table>
         <TableRow>
           <TableCell className="flex items-center gap-2">
             <EyeIcon /> Views
@@ -102,7 +152,7 @@ function WallpaperInfoPanel({
             </div>
           </TableCell>
         </TableRow>
-      </Table>
+      </Table>*/}
       <WallpaperColorBar colors={wallpaper?.colors} />
     </div>
   );

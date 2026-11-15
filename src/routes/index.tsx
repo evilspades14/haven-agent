@@ -45,6 +45,7 @@ import {
 } from "@phosphor-icons/react";
 import { CheckCircleIcon } from "@phosphor-icons/react/dist/ssr";
 import { createFileRoute } from "@tanstack/react-router";
+import { FilterIcon } from "lucide-react";
 import { useState } from "react";
 
 export const Route = createFileRoute("/")({
@@ -120,7 +121,7 @@ function RouteComponent() {
         </Field>
         {params.sorting === "toplist" && (
           <Select
-            value={params.topRange}
+            value={params.topRange ?? undefined}
             onValueChange={(value) =>
               updateParams({ topRange: value as SearchParametersTopRange })
             }
@@ -137,8 +138,8 @@ function RouteComponent() {
         )}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button size={"icon"} variant={"outline"}>
-              <SortAscendingIcon />
+            <Button variant={"outline"}>
+              <SortAscendingIcon /> Sort
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent>
@@ -159,11 +160,10 @@ function RouteComponent() {
           </DropdownMenuContent>
         </DropdownMenu>
         <Button
-          size={"icon"}
           variant={"outline"}
           onClick={() => setIsOptionsDialogOpen(true)}
         >
-          <SlidersHorizontalIcon />
+          <FilterIcon /> Filter
         </Button>
       </div>
       <WallpaperFeed
@@ -177,7 +177,7 @@ function RouteComponent() {
         onOpenChange={(open) => !open && setSelectedWallpaper(null)}
       />
       <Dialog open={isOptionsDialogOpen} onOpenChange={setIsOptionsDialogOpen}>
-        <DialogContent className="overflow-y-auto">
+        <DialogContent className="flex flex-col overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Search Options</DialogTitle>
             <DialogDescription></DialogDescription>
