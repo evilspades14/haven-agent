@@ -29,12 +29,13 @@ function RouteComponent() {
   >("username", undefined);
   const [selectedCollectionId, setSelectedCollectionId] = useState<
     number | null
-  >();
+  >(null);
   const { data } = useUserCollections({ apiKey });
   const { data: collection } = useCollection({
-    apikey: apiKey!,
-    collection_id: String(selectedCollectionId)!,
-    username: username!,
+    apikey: apiKey ?? "",
+    collection_id:
+      selectedCollectionId == null ? "" : String(selectedCollectionId),
+    username: username ?? "",
   });
   if (!apiKey)
     return (

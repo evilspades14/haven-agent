@@ -13,7 +13,7 @@ const WallhavenAPIService = {
     return await invoke<CollectionsResponse>("user_collections", { params });
   },
   async listCollection(params: ListCollectionParams) {
-    return await invoke<SearchResponse>("list_collection", params)
+    return await invoke<SearchResponse>("list_collection", { params })
   }
 };
 
