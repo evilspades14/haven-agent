@@ -8,8 +8,10 @@ import {
 } from "@/components/ui/empty";
 import { Item, ItemContent, ItemMedia, ItemTitle } from "@/components/ui/item";
 import { WallpaperCard } from "@/components/wallpaper-card";
+import { WallpaperCardDetail } from "@/components/wallpaper-detail";
 import { useCollection, useUserCollections } from "@/features/use-wallhaven";
 import { useStoreValue } from "@/hooks/use-settings";
+import { Wallpaper } from "@/types/core/Wallpaper";
 import { ImageIcon, StackIcon } from "@phosphor-icons/react";
 import { createFileRoute } from "@tanstack/react-router";
 import { AnimatePresence } from "motion/react";
@@ -20,16 +22,18 @@ export const Route = createFileRoute("/collection")({
 });
 
 function RouteComponent() {
-  const [apiKey, _updateApiKey, _apiKeyReady] = useStoreValue<string | undefined>(
-    "apiKey",
-    undefined,
-  );
+  const [apiKey, _updateApiKey, _apiKeyReady] = useStoreValue<
+    string | undefined
+  >("apiKey", undefined);
   const [username, _updateUsername, _usernameReady] = useStoreValue<
     string | undefined
   >("username", undefined);
   const [selectedCollectionId, setSelectedCollectionId] = useState<
     number | null
   >(null);
+  const [selectedWallpaper, setSelectedWallpaper] = useState<Wallpaper | null>(
+    null,
+  );
   const { data } = useUserCollections({ apiKey });
   const { data: collection } = useCollection({
     apikey: apiKey ?? "",
@@ -49,11 +53,12 @@ function RouteComponent() {
   return (
     <div className="h-dvh">
       {data?.data && data.data?.length > 0 ? (
-        <div className="flex h-full">
+        <div className="flex h-full gap-4">
           <div className="flex flex-col gap-3">
             {data.data.map((collection) => (
               <Item
                 variant={"outline"}
+                size={"sm"}
                 className="select-none cursor-pointer"
                 onClick={() => setSelectedCollectionId(collection.id)}
                 key={collection.id}
@@ -67,13 +72,14 @@ function RouteComponent() {
               </Item>
             ))}
           </div>
-          <div className="gap-4">
+          <div className="flex flex-wrap gap-4 w-full">
             <AnimatePresence mode="popLayout">
               {collection?.data.map((wallpaper) => (
                 <WallpaperCard
                   wallpaper={wallpaper}
                   key={wallpaper.id}
                   className="mb-3"
+                  onClick={() => setSelectedWallpaper(wallpaper)}
                 />
               ))}
             </AnimatePresence>
@@ -90,6 +96,10 @@ function RouteComponent() {
           </EmptyHeader>
         </Empty>
       )}
+      <WallpaperCardDetail
+        wallpaper={selectedWallpaper}
+        onOpenChange={(open) => !open && setSelectedWallpaper(null)}
+      />
     </div>
   );
 }
