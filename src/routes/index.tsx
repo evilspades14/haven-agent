@@ -36,7 +36,6 @@ import { Wallpaper } from "@/types/core/Wallpaper";
 import {
   CubeIcon,
   HandPeaceIcon,
-  SlidersHorizontalIcon,
   SmileyIcon,
   SmileyMeltingIcon,
   SmileyXEyesIcon,
@@ -57,7 +56,7 @@ function categoryValuestoCategoryParam<T extends Record<string, boolean>>(
 ): T {
   let categories = {} as T;
   values.forEach((val) => {
-    categories[val] = true;
+    categories[val] = true as T[keyof T];
   });
   return categories;
 }
@@ -75,7 +74,7 @@ function RouteComponent() {
   const updateParams = useWallhavenClientParamsStore(
     (state) => state.updateParams,
   );
-  const [apiKey, _updateApiKey, apiKeyReady] = useStoreValue<
+  const [apiKey, _updateApiKey] = useStoreValue<
     string | undefined
   >("apiKey", undefined);
   const [selectedWallpaper, setSelectedWallpaper] = useState<Wallpaper | null>(
@@ -221,7 +220,7 @@ function RouteComponent() {
                 variant={"outline"}
                 value={objParamToArray(params?.purity ?? {})}
                 onValueChange={(
-                  value: Array<keyof SearchParametersCategories>,
+                  value: Array<keyof SearchParametersPurities>,
                 ) =>
                   !!value &&
                   updateParams({
@@ -235,10 +234,10 @@ function RouteComponent() {
                 <ToggleGroupItem value={"sfw"}>
                   <SmileyIcon /> SFW
                 </ToggleGroupItem>
-                <ToggleGroupItem value={"people"}>
+                <ToggleGroupItem value={"sketchy"}>
                   <SmileyMeltingIcon /> SKETCHY
                 </ToggleGroupItem>
-                <ToggleGroupItem value={"anime"} disabled={!apiKey}>
+                <ToggleGroupItem value={"nsfw"} disabled={!apiKey}>
                   <SmileyXEyesIcon /> NSFW
                 </ToggleGroupItem>
               </ToggleGroup>

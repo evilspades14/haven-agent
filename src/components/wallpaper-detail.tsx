@@ -30,17 +30,15 @@ import {
   XIcon,
 } from "@phosphor-icons/react";
 import { openUrl } from "@tauri-apps/plugin-opener";
-import { Table, TableCell, TableRow } from "./ui/table";
 import { cn } from "cn";
 import { useDownload } from "@/hooks/use-download";
 import { Progress } from "./ui/progress";
 import WallpaperColorBar from "./wallpaper-color-bar";
-import { ReactNode, RefObject, useCallback, useRef } from "react";
+import { ReactNode, RefObject, useRef } from "react";
 import {
   Item,
   ItemActions,
   ItemContent,
-  ItemHeader,
   ItemMedia,
   ItemTitle,
 } from "./ui/item";
@@ -87,7 +85,6 @@ const wallpaperInfoFields: (wallpaper: Wallpaper) => {
 
 function WallpaperInfoPanel({
   wallpaper,
-  className,
 }: {
   wallpaper: Wallpaper | null;
   className?: string;
@@ -260,24 +257,23 @@ export function WallpaperCardDetail({
 function WallpaperPanel({
   wallpaper,
   className,
-  zoomedRef,
 }: {
   wallpaper: Wallpaper | null;
   className?: string;
   zoomedRef?: RefObject<boolean>;
 }) {
-  const handleZoomChange = useCallback((zoomed: boolean) => {
-    if (zoomedRef === undefined) return;
-    if (zoomed) {
-      zoomedRef.current = true;
-    } else {
-      // Keep the flag up past the unzoom animation and focus restoration,
-      // so the Escape/click/focus event that closed the zoom is still ignored
-      setTimeout(() => {
-        zoomedRef.current = false;
-      }, 300);
-    }
-  }, []);
+  // const handleZoomChange = useCallback((zoomed: boolean) => {
+  //   if (zoomedRef === undefined) return;
+  //   if (zoomed) {
+  //     zoomedRef.current = true;
+  //   } else {
+  //     // Keep the flag up past the unzoom animation and focus restoration,
+  //     // so the Escape/click/focus event that closed the zoom is still ignored
+  //     setTimeout(() => {
+  //       zoomedRef.current = false;
+  //     }, 300);
+  //   }
+  // }, []);
 
   return (
     <div

@@ -6,7 +6,6 @@ import { Lock, LockOpen, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Resolution } from "@/types/core/Resolution";
 import { Field, FieldDescription, FieldLabel } from "../ui/field";
 
@@ -145,19 +144,27 @@ export function ResolutionField({
   }
 
   function setWidth(width: number | undefined) {
-    if (locked && ratioRef.current && width) {
-      onChange({ width, height: Math.round(width / ratioRef.current) });
-    } else {
-      onChange({ ...value, width });
+    if (width == null) {
+      onChange(null);
+      return;
     }
+    const height =
+      locked && ratioRef.current
+        ? Math.round(width / ratioRef.current)
+        : (value?.height ?? width);
+    onChange({ width, height });
   }
 
   function setHeight(height: number | undefined) {
-    if (locked && ratioRef.current && height) {
-      onChange({ width: Math.round(height * ratioRef.current), height });
-    } else {
-      onChange({ ...value, height });
+    if (height == null) {
+      onChange(null);
+      return;
     }
+    const width =
+      locked && ratioRef.current
+        ? Math.round(height * ratioRef.current)
+        : (value?.width ?? height);
+    onChange({ width, height });
   }
 
   function applyPreset(width: number, height: number) {

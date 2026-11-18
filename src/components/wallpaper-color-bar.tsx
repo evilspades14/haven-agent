@@ -3,7 +3,6 @@ import { toast } from "sonner";
 
 function WallpaperColorBar({
   colors,
-  onClick,
 }: {
   colors?: string[];
   onClick?: (color: string) => void;
