@@ -1,6 +1,6 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "haven-agent",
+  "productName": "Slatehaven",
   "version": "0.1.0",
   "identifier": "com.homegolem.haven-agent",
   "build": {

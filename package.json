@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "tauri": "JAVA_HOME=\"${JAVA_HOME:-/usr/lib/jvm/java-21-openjdk}\" tauri"
+    "tauri": "tauri"
   },
   "dependencies": {
     "@base-ui/react": "^1.9.0",

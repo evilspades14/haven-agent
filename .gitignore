@@ -23,4 +23,4 @@ target
 *.njsproj
 *.sln
 *.sw?
-apps/desktop/gen/android/
+apps/desktop/gen/android/*

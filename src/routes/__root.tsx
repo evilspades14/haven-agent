@@ -50,10 +50,10 @@ const TABS = [
 function BottomNav() {
   return (
     <div
-      className="md:hidden fixed inset-x-0 bottom-0 z-50 flex justify-center"
+      className="md:hidden fixed left-0 right-0 bottom-0 z-50 flex justify-center bg-background"
       style={{ paddingBottom: "calc(env(safe-area-inset-bottom, 0px))" }}
     >
-      <nav className="flex items-center gap-1 bg-background backdrop-blur-xl border shadow-xl py-2 w-full justify-around">
+      <nav className="flex items-center gap-1 py-2 w-full justify-around">
         {TABS.map((tab) => {
           const Icon = tab.icon;
           // const isActive = active === tab.id;
@@ -131,8 +131,8 @@ function Root() {
     );
   } else {
     return (
-      <div className="flex-1 max-h-dvh p-6 overflow-hidden pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]">
-        <main className="relative min-h-0 min-w-0 py-6">
+      <div className="flex-1 max-h-dvh p-6 overflow-hidden pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)] bg-background">
+        <main className="relative min-h-0 min-w-0">
           <Outlet />
         </main>
         <BottomNav />
