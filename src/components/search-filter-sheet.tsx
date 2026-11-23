@@ -1,0 +1,322 @@
+import {
+  CaretUpDownIcon,
+  CubeIcon,
+  HandPeaceIcon,
+  Icon,
+  PaletteIcon,
+  ShapesIcon,
+  ShieldIcon,
+  SmileyIcon,
+  SmileyMeltingIcon,
+  SmileyXEyesIcon,
+  UserIcon,
+} from "@phosphor-icons/react";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "./ui/accordion";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "./ui/sheet";
+import { ToggleGroup, ToggleGroupItem } from "./ui/toggle-group";
+import { ResolutionField } from "./experimental/resolution-field";
+import {
+  Field,
+  FieldContent,
+  FieldDescription,
+  FieldGroup,
+  FieldLabel,
+  FieldTitle,
+} from "./ui/field";
+import { useState } from "react";
+import { SearchParameters } from "@/types/core/SearchParameters";
+import { useStoreValue } from "@/hooks/use-settings";
+import { SearchParametersCategories } from "@/types/core/SearchParametersCategories";
+import {
+  categoryValuestoCategoryParam,
+  objParamToArray,
+} from "./search-filter-sheet.utils";
+import useWallhavenClientParamsStore from "@/hooks/wallhaven-params";
+import { SearchParametersPurities } from "@/types/core/SearchParametersPurities";
+import WallpaperColorBar from "./wallpaper-color-bar";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "./ui/collapsible";
+import { Button } from "./ui/button";
+import {
+  Item,
+  ItemActions,
+  ItemContent,
+  ItemMedia,
+  ItemTitle,
+} from "./ui/item";
+import { Switch } from "./ui/switch";
+import {
+  buildSearchCategories,
+  ParsedSearchCategories,
+  ParsedSearchPurities,
+  parseSearchCategories,
+  parseSearchPurities,
+} from "@/types/utils";
+import {
+  defaultSearchParametersCategories,
+  defaultSearchParametersPurities,
+} from "@/types/default/defaultSearchParameters";
+
+type SearchFilterSheetProps = {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+};
+
+const SEARCH_CATEGORIES: {
+  value: keyof ParsedSearchCategories;
+  label: string;
+  icon: Icon;
+}[] = [
+  { value: "general", label: "General", icon: CubeIcon },
+  { value: "anime", label: "Anime", icon: HandPeaceIcon },
+  { value: "people", label: "People", icon: UserIcon },
+];
+
+const SEARCH_PURITIES: {
+  value: keyof ParsedSearchPurities;
+  label: string;
+  icon: Icon;
+}[] = [
+  { value: "sfw", label: "SFW", icon: SmileyIcon },
+  { value: "sketchy", label: "SKETCHY", icon: SmileyMeltingIcon },
+  { value: "nsfw", label: "NSFW", icon: SmileyXEyesIcon },
+];
+
+function SearchFilterSheet({ open, onOpenChange }: SearchFilterSheetProps) {
+  const params = useWallhavenClientParamsStore((state) => state.params);
+  const updateParams = useWallhavenClientParamsStore(
+    (state) => state.updateParams,
+  );
+  const [apiKey, _updateApiKey] = useStoreValue<string | undefined>(
+    "apiKey",
+    undefined,
+  );
+  return (
+    <Sheet open={open} onOpenChange={onOpenChange}>
+      <SheetContent className="overflow-y-auto">
+        <SheetHeader>
+          <SheetTitle>Search Options</SheetTitle>
+        </SheetHeader>
+
+        {/*<Accordion
+          value={selectedFilter}
+          onValueChange={(value) => setSelectedFilter(value)}
+          type="single"
+        >
+          <AccordionItem value="category">
+            <AccordionTrigger>Category</AccordionTrigger>
+            <AccordionContent>
+              <ToggleGroup
+                type="multiple"
+                className="grid grid-cols-3"
+                variant={"outline"}
+                value={objParamToArray(params?.categories ?? {})}
+                onValueChange={(
+                  value: Array<keyof SearchParametersCategories>,
+                ) =>
+                  !!value &&
+                  updateParams({
+                    categories:
+                      categoryValuestoCategoryParam<SearchParametersCategories>(
+                        value,
+                      ),
+                  })
+                }
+              >
+                <ToggleGroupItem value={"general"}>
+                  <CubeIcon /> General
+                </ToggleGroupItem>
+                <ToggleGroupItem value={"people"}>
+                  <UserIcon /> People
+                </ToggleGroupItem>
+                <ToggleGroupItem value={"anime"}>
+                  <HandPeaceIcon /> Anime
+                </ToggleGroupItem>
+              </ToggleGroup>
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>*/}
+
+        <FieldGroup className="p-4">
+          <Collapsible>
+            <Field>
+              <CollapsibleTrigger asChild>
+                <Button variant={"ghost"} className="w-full">
+                  <ShapesIcon />
+                  Category
+                  <CaretUpDownIcon className="ml-auto" />
+                </Button>
+              </CollapsibleTrigger>
+              <CollapsibleContent className="flex flex-col gap-1">
+                {SEARCH_CATEGORIES.map((cat) => (
+                  <Item variant={"muted"}>
+                    <ItemMedia>
+                      <cat.icon />
+                    </ItemMedia>
+                    <ItemContent>
+                      <ItemTitle className="select-none">{cat.label}</ItemTitle>
+                    </ItemContent>
+                    <ItemActions>
+                      <Switch
+                        checked={
+                          parseSearchCategories(
+                            params.categories ??
+                              defaultSearchParametersCategories(),
+                          )?.[cat.value] ?? false
+                        }
+                        onCheckedChange={(value) => {
+                          updateParams({
+                            categories: buildSearchCategories({
+                              ...parseSearchCategories(
+                                defaultSearchParametersCategories(),
+                              ),
+                              ...(params?.categories &&
+                                parseSearchCategories(params.categories)),
+                              [cat.value as keyof ParsedSearchCategories]:
+                                value,
+                            }),
+                          });
+                        }}
+                      />
+                    </ItemActions>
+                  </Item>
+                ))}
+              </CollapsibleContent>
+            </Field>
+          </Collapsible>
+
+          <Collapsible>
+            <Field>
+              <CollapsibleTrigger asChild>
+                <Button variant={"ghost"} className="w-full">
+                  <ShieldIcon />
+                  Purity
+                  <CaretUpDownIcon className="ml-auto" />
+                </Button>
+              </CollapsibleTrigger>
+              <CollapsibleContent className="flex flex-col gap-1">
+                {SEARCH_PURITIES.map((cat) => (
+                  <Item variant={"muted"}>
+                    <ItemMedia>
+                      <cat.icon />
+                    </ItemMedia>
+                    <ItemContent>
+                      <ItemTitle>{cat.label}</ItemTitle>
+                    </ItemContent>
+                    <ItemActions>
+                      <Switch
+                        checked={
+                          parseSearchPurities(
+                            params.purity ?? defaultSearchParametersPurities(),
+                          )?.[cat.value] ?? false
+                        }
+                        onCheckedChange={(value) => {
+                          updateParams({
+                            purity: {
+                              [cat.value as keyof SearchParametersCategories]:
+                                value,
+                            },
+                          });
+                        }}
+                      />
+                    </ItemActions>
+                  </Item>
+                ))}
+              </CollapsibleContent>
+            </Field>
+          </Collapsible>
+
+          <Collapsible>
+            <Field>
+              <CollapsibleTrigger asChild>
+                <Button variant={"ghost"} className="w-full">
+                  <PaletteIcon />
+                  Colors
+                  <CaretUpDownIcon className="ml-auto" />
+                </Button>
+              </CollapsibleTrigger>
+
+              <CollapsibleContent>
+                <WallpaperColorBar
+                  colors={params.colors ?? undefined}
+                  mode="edit"
+                />
+              </CollapsibleContent>
+            </Field>
+          </Collapsible>
+
+          {/*<Field>
+            <FieldLabel>Category</FieldLabel>
+            <ToggleGroup
+              type="multiple"
+              className="grid grid-cols-3"
+              variant={"outline"}
+              value={objParamToArray(params?.categories ?? {})}
+              onValueChange={(value: Array<keyof SearchParametersCategories>) =>
+                !!value &&
+                updateParams({
+                  categories:
+                    categoryValuestoCategoryParam<SearchParametersCategories>(
+                      value,
+                    ),
+                })
+              }
+            >
+              <ToggleGroupItem value={"general"}>
+                <CubeIcon /> General
+              </ToggleGroupItem>
+              <ToggleGroupItem value={"people"}>
+                <UserIcon /> People
+              </ToggleGroupItem>
+              <ToggleGroupItem value={"anime"}>
+                <HandPeaceIcon /> Anime
+              </ToggleGroupItem>
+            </ToggleGroup>
+          </Field>*/}
+          {/*<Field>
+            <FieldLabel>Purity</FieldLabel>
+            <ToggleGroup
+              type="multiple"
+              className="grid grid-cols-3"
+              variant={"outline"}
+              value={objParamToArray(params?.purity ?? {})}
+              onValueChange={(value: Array<keyof SearchParametersPurities>) =>
+                !!value &&
+                updateParams({
+                  purity:
+                    categoryValuestoCategoryParam<SearchParametersPurities>(
+                      value,
+                    ),
+                })
+              }
+            >
+              <ToggleGroupItem value={"sfw"}>
+                <SmileyIcon /> SFW
+              </ToggleGroupItem>
+              <ToggleGroupItem value={"sketchy"}>
+                <SmileyMeltingIcon /> SKETCHY
+              </ToggleGroupItem>
+              <ToggleGroupItem value={"nsfw"} disabled={!apiKey}>
+                <SmileyXEyesIcon /> NSFW
+              </ToggleGroupItem>
+            </ToggleGroup>
+          </Field>*/}
+          <ResolutionField
+            value={params?.atleast ?? null}
+            onChange={(value) => updateParams({ atleast: value })}
+          />
+        </FieldGroup>
+      </SheetContent>
+    </Sheet>
+  );
+}
+
+export default SearchFilterSheet;

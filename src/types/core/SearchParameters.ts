@@ -2,7 +2,6 @@
 import type { AspectRatio } from "./AspectRatio";
 import type { Resolution } from "./Resolution";
 import type { SearchParametersCategories } from "./SearchParametersCategories";
-import type { SearchParametersColor } from "./SearchParametersColor";
 import type { SearchParametersOrder } from "./SearchParametersOrder";
 import type { SearchParametersPurities } from "./SearchParametersPurities";
 import type { SearchParametersSort } from "./SearchParametersSort";
@@ -19,7 +18,7 @@ q: string | null,
 categories: SearchParametersCategories | null, 
 /**
  * Turn purities on(1) or off(0)
- * 
+ *
  * NSFW requires a valid API key
  */
 purity: SearchParametersPurities | null, 
@@ -41,23 +40,23 @@ topRange: SearchParametersTopRange | null,
 atleast: Resolution | null, 
 /**
  * List of exact wallpaper resolutions
- * 
+ *
  * Single resolution allowed
  */
 resolutions: Array<Resolution> | null, 
 /**
  * List of aspect ratios
- * 
+ *
  * Single ratio allowed
  */
 ratios: Array<AspectRatio> | null, 
 /**
  * Search by color
  */
-colors: Array<SearchParametersColor> | null, 
+colors: Array<string> | null, 
 /**
  * Pagination
- * 
+ *
  * Not actually infinite
  */
 page: number | null, 

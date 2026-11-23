@@ -63,7 +63,7 @@ function WallpaperFeed({ columns = 3, ...props }: WallpaperFeedProps) {
   return (
     <LayoutGroup>
       <div className="overflow-y-auto min-h-0 h-full" ref={scrollContainerRef}>
-        <div className="flex p-4 gap-3 justify-center">
+        <div className="flex p-4 gap-2 justify-center">
           {feedColumns.map((col, i) => (
             <div key={i} className="gap-4">
               <AnimatePresence mode="popLayout">
@@ -72,7 +72,7 @@ function WallpaperFeed({ columns = 3, ...props }: WallpaperFeedProps) {
                     wallpaper={wallpaper}
                     onClick={() => props.onSelectWallpaper?.(wallpaper)}
                     key={wallpaper.id}
-                    className="mb-3"
+                    className="mb-2"
                   />
                 ))}
               </AnimatePresence>

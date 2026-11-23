@@ -20,7 +20,7 @@ export function WallpaperCard({
       key={wallpaper.id}
       onClick={onClick}
       className={cn(
-        "rounded-md outline overflow-hidden select-none break-inside-avoid cursor-pointer",
+        "rounded-sm overflow-hidden select-none break-inside-avoid cursor-pointer",
         wallpaper.purity === "sketchy" && "outline-destructive outline-2",
         className,
       )}

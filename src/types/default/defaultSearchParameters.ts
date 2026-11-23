@@ -1,5 +1,13 @@
 import { SearchParameters } from "../core/SearchParameters";
 
+export function defaultSearchParametersCategories() {
+  return "111"
+}
+
+export function defaultSearchParametersPurities() {
+  return "100"
+}
+
 export function defaultSearchParameters(): SearchParameters {
     return {
         q: null,

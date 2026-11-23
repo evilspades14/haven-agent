@@ -1,4 +1,6 @@
 import { ResolutionField } from "@/components/experimental/resolution-field";
+import SearchFilterSheet from "@/components/search-filter-sheet";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -22,6 +24,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { WallpaperCardDetail } from "@/components/wallpaper-detail";
 import WallpaperFeed from "@/components/wallpaper-feed";
@@ -51,32 +59,15 @@ export const Route = createFileRoute("/")({
   component: RouteComponent,
 });
 
-function categoryValuestoCategoryParam<T extends Record<string, boolean>>(
-  values: Array<keyof T>,
-): T {
-  let categories = {} as T;
-  values.forEach((val) => {
-    categories[val] = true as T[keyof T];
-  });
-  return categories;
-}
-
-function objParamToArray<T extends Record<string, boolean>>(
-  obj: T,
-): Array<keyof T & string> {
-  return (Object.keys(obj) as Array<keyof T & string>).filter(
-    (key) => obj[key],
-  );
-}
-
 function RouteComponent() {
   const params = useWallhavenClientParamsStore((state) => state.params);
   const updateParams = useWallhavenClientParamsStore(
     (state) => state.updateParams,
   );
-  const [apiKey, _updateApiKey] = useStoreValue<
-    string | undefined
-  >("apiKey", undefined);
+  const [apiKey, _updateApiKey] = useStoreValue<string | undefined>(
+    "apiKey",
+    undefined,
+  );
   const [selectedWallpaper, setSelectedWallpaper] = useState<Wallpaper | null>(
     null,
   );
@@ -175,7 +166,10 @@ function RouteComponent() {
         wallpaper={selectedWallpaper}
         onOpenChange={(open) => !open && setSelectedWallpaper(null)}
       />
-      <Dialog open={isOptionsDialogOpen} onOpenChange={setIsOptionsDialogOpen}>
+
+      <SearchFilterSheet open={isOptionsDialogOpen} onOpenChange={setIsOptionsDialogOpen} />
+
+      {/*<Dialog open={isOptionsDialogOpen} onOpenChange={setIsOptionsDialogOpen}>
         <DialogContent className="flex flex-col overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Search Options</DialogTitle>
@@ -219,9 +213,7 @@ function RouteComponent() {
                 className="grid grid-cols-3"
                 variant={"outline"}
                 value={objParamToArray(params?.purity ?? {})}
-                onValueChange={(
-                  value: Array<keyof SearchParametersPurities>,
-                ) =>
+                onValueChange={(value: Array<keyof SearchParametersPurities>) =>
                   !!value &&
                   updateParams({
                     purity:
@@ -246,10 +238,9 @@ function RouteComponent() {
               value={params?.atleast ?? null}
               onChange={(value) => updateParams({ atleast: value })}
             />
-            {/*{params.ratios}*/}
           </FieldGroup>
         </DialogContent>
-      </Dialog>
+      </Dialog>*/}
     </div>
   );
 }

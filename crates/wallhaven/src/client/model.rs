@@ -4,6 +4,7 @@ use serde::{Deserialize, Serialize};
 use ts_rs::TS;
 
 #[derive(Deserialize, Debug, TS, PartialEq, Eq, Hash)]
+#[ts(as = "String")]
 pub struct SearchParametersCategories {
     general: bool,
     anime: bool,
@@ -23,6 +24,7 @@ impl Serialize for SearchParametersCategories {
 }
 
 #[derive(Deserialize, Debug, TS, PartialEq, Eq, Hash)]
+#[ts(as = "String")]
 pub struct SearchParametersPurities {
     sfw: bool,
     sketchy: bool,
@@ -176,7 +178,7 @@ pub struct SearchParameters {
     #[serde(skip_serializing_if = "Option::is_none")]
     categories: Option<SearchParametersCategories>,
     /// Turn purities on(1) or off(0)
-    /// 
+    ///
     /// NSFW requires a valid API key
     #[serde(skip_serializing_if = "Option::is_none")]
     purity: Option<SearchParametersPurities>,
@@ -193,20 +195,20 @@ pub struct SearchParameters {
     #[serde(skip_serializing_if = "Option::is_none")]
     atleast: Option<Resolution>,
     /// List of exact wallpaper resolutions
-    /// 
+    ///
     /// Single resolution allowed
     #[serde(skip_serializing_if = "Option::is_none")]
     resolutions: Option<Vec<Resolution>>,
     /// List of aspect ratios
-    /// 
+    ///
     /// Single ratio allowed
     #[serde(skip_serializing_if = "Option::is_none")]
     ratios: Option<Vec<AspectRatio>>,
     /// Search by color
     #[serde(skip_serializing_if = "Option::is_none")]
-    colors: Option<Vec<SearchParametersColor>>,
+    colors: Option<Vec<String>>,
     /// Pagination
-    /// 
+    ///
     /// Not actually infinite
     #[serde(skip_serializing_if = "Option::is_none")]
     page: Option<u32>,
