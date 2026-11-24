@@ -150,7 +150,7 @@ function WallpaperInfoPanel({
           </TableCell>
         </TableRow>
       </Table>*/}
-      <WallpaperColorBar colors={wallpaper?.colors} />
+      <WallpaperColorBar value={wallpaper?.colors} mode="view" />
     </div>
   );
 }

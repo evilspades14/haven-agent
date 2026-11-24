@@ -1,6 +1,7 @@
 import {
   CaretUpDownIcon,
   CubeIcon,
+  FrameCornersIcon,
   HandPeaceIcon,
   Icon,
   PaletteIcon,
@@ -19,7 +20,19 @@ import {
 } from "./ui/accordion";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "./ui/sheet";
 import { ToggleGroup, ToggleGroupItem } from "./ui/toggle-group";
-import { ResolutionField } from "./experimental/resolution-field";
+import {
+  ResolutionField,
+  ResolutionFieldClear,
+  ResolutionFieldHeight,
+  ResolutionFieldInputs,
+  ResolutionFieldLabel,
+  ResolutionFieldLock,
+  ResolutionFieldOrientation,
+  ResolutionFieldPresets,
+  ResolutionFieldPreview,
+  ResolutionFieldReadout,
+  ResolutionFieldWidth,
+} from "./experimental/resolution-field";
 import {
   Field,
   FieldContent,
@@ -49,12 +62,14 @@ import {
   Item,
   ItemActions,
   ItemContent,
+  ItemDescription,
   ItemMedia,
   ItemTitle,
 } from "./ui/item";
 import { Switch } from "./ui/switch";
 import {
   buildSearchCategories,
+  buildSearchPurities,
   ParsedSearchCategories,
   ParsedSearchPurities,
   parseSearchCategories,
@@ -220,10 +235,14 @@ function SearchFilterSheet({ open, onOpenChange }: SearchFilterSheetProps) {
                         }
                         onCheckedChange={(value) => {
                           updateParams({
-                            purity: {
-                              [cat.value as keyof SearchParametersCategories]:
-                                value,
-                            },
+                            purity: buildSearchPurities({
+                              ...parseSearchPurities(
+                                defaultSearchParametersPurities(),
+                              ),
+                              ...(params?.purity &&
+                                parseSearchPurities(params.purity)),
+                              [cat.value as keyof ParsedSearchPurities]: value,
+                            }),
                           });
                         }}
                       />
@@ -246,7 +265,7 @@ function SearchFilterSheet({ open, onOpenChange }: SearchFilterSheetProps) {
 
               <CollapsibleContent>
                 <WallpaperColorBar
-                  colors={params.colors ?? undefined}
+                  value={params.colors ?? undefined}
                   mode="edit"
                 />
               </CollapsibleContent>
@@ -309,10 +328,64 @@ function SearchFilterSheet({ open, onOpenChange }: SearchFilterSheetProps) {
               </ToggleGroupItem>
             </ToggleGroup>
           </Field>*/}
-          <ResolutionField
+          {/*<ResolutionField
             value={params?.atleast ?? null}
             onChange={(value) => updateParams({ atleast: value })}
-          />
+          />*/}
+          <Collapsible>
+            <CollapsibleTrigger asChild>
+              <Button variant={"ghost"} className="w-full">
+                <FrameCornersIcon />
+                Minimum Resolution
+                <CaretUpDownIcon className="ml-auto" />
+              </Button>
+              {/*<Item variant={"outline"} className="bg-background">
+                <ItemMedia variant={"icon"}>
+                  <FrameCornersIcon/>
+                </ItemMedia>
+                <ItemContent>
+                  <ItemTitle>
+                    Resolution
+                  </ItemTitle>
+                  <ItemDescription>
+                    Minimum width and height
+                  </ItemDescription>
+                </ItemContent>
+                <ItemActions>
+                  <CaretUpDownIcon/>
+                </ItemActions>
+              </Item>*/}
+            </CollapsibleTrigger>
+            <CollapsibleContent>
+              <ResolutionField
+                value={params?.atleast ?? null}
+                onChange={(value) => updateParams({ atleast: value })}
+                className="mt-2"
+              >
+                <ResolutionFieldOrientation/>
+                <ResolutionFieldPresets
+                  className="grid grid-cols-2"
+                  presets={[
+                    { label: "HD", width: 1280, height: 720 },
+                    { label: "Full HD", width: 1920, height: 1080 },
+                    { label: "QHD", width: 2560, height: 1440 },
+                    { label: "4K", width: 3840, height: 2160 },
+                  ]}
+                />
+                <ResolutionFieldInputs>
+                  <ResolutionFieldWidth unit="wide" />
+                  <ResolutionFieldLock />
+                  <ResolutionFieldHeight unit="tall" />
+                </ResolutionFieldInputs>
+                <ResolutionFieldPreview />
+                <ResolutionFieldReadout
+                  format={(v) => (v ? `${v.width}×${v.height}+` : "No limit")}
+                />
+                <ResolutionFieldClear/>
+              </ResolutionField>
+            </CollapsibleContent>
+          </Collapsible>
+          
         </FieldGroup>
       </SheetContent>
     </Sheet>
