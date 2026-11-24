@@ -18,13 +18,13 @@ function WallpaperColorBar({
 }:
   | {
       value?: string[];
-      onValueChange?: (value: string[]) => void;
+      onValueChange?: (value: string[] | null) => void;
       onClick?: (color: string) => void;
       mode: "view";
     }
   | {
       value?: string[];
-      onValueChange?: (value: string[]) => void;
+      onValueChange?: (value: string[] | null) => void;
       mode: "edit";
     }) {
   const copy = async (color: string) =>
@@ -33,15 +33,7 @@ function WallpaperColorBar({
         await navigator.clipboard.writeText(color);
       },
       {
-        success: () => (
-          <div className="flex items-center gap-3">
-            Coped to clipboard.{" "}
-            <div
-              className="size-5 rounded"
-              style={{ backgroundColor: color }}
-            />
-          </div>
-        ),
+        success: () => "Coped to clipboard.",
       },
     );
   const [selectedColors, setSelectedColors] = useState<(string | null)[]>([
@@ -65,7 +57,8 @@ function WallpaperColorBar({
 
   useEffect(() => {
     if (mode === "edit") {
-      onValueChange?.(selectedColors.filter((v) => Boolean(v)) as string[]);
+      const next = selectedColors.filter((v) => Boolean(v)) as string[];
+      onValueChange?.(next.length > 0 ? next : null);
     }
   }, [selectedColors]);
 
@@ -127,9 +120,7 @@ function WallpaperColorBar({
                       <XIcon />
                     </Button>
                   </TooltipTrigger>
-                  <TooltipContent>
-                    Clear
-                  </TooltipContent>
+                  <TooltipContent>Clear</TooltipContent>
                 </Tooltip>
               </div>
             </PopoverContent>

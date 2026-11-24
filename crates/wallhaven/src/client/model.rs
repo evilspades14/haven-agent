@@ -1,6 +1,6 @@
-use std::{collections::HashSet, str::FromStr};
+use std::{collections::HashSet, fmt::Display, str::FromStr};
 
-use serde::{Deserialize, Serialize};
+use serde::{Deserialize, Serialize, Serializer};
 use ts_rs::TS;
 
 #[derive(Deserialize, Debug, TS, PartialEq, Eq, Hash)]
@@ -88,6 +88,12 @@ pub struct Resolution {
     height: u32,
 }
 
+impl Display for Resolution {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}x{}", self.width, self.height)
+    }
+}
+
 impl Serialize for Resolution {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
@@ -101,6 +107,12 @@ impl Serialize for Resolution {
 pub struct AspectRatio {
     width: u8,
     height: u8,
+}
+
+impl Display for AspectRatio {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}x{}", self.width, self.height)
+    }
 }
 
 impl Serialize for AspectRatio {
@@ -167,6 +179,24 @@ impl Serialize for SearchParametersColor {
     }
 }
 
+fn comma_joined<T, S>(v: &Option<Vec<T>>, s: S) -> Result<S::Ok, S::Error>
+where
+    T: Display,
+    S: Serializer,
+{
+    match v {
+        Some(items) => {
+            let joined = items
+                .iter()
+                .map(|i| i.to_string())
+                .collect::<Vec<_>>()
+                .join(",");
+            s.serialize_str(&joined)
+        }
+        None => s.serialize_none(),
+    }
+}
+
 #[derive(Serialize, Deserialize, TS, Debug, PartialEq, Eq, Hash)]
 #[serde(rename_all = "camelCase")]
 #[ts(export)]
@@ -197,15 +227,24 @@ pub struct SearchParameters {
     /// List of exact wallpaper resolutions
     ///
     /// Single resolution allowed
-    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "comma_joined"
+    )]
     resolutions: Option<Vec<Resolution>>,
     /// List of aspect ratios
     ///
     /// Single ratio allowed
-    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "comma_joined"
+    )]
     ratios: Option<Vec<AspectRatio>>,
     /// Search by color
-    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "comma_joined"
+    )]
     colors: Option<Vec<String>>,
     /// Pagination
     ///

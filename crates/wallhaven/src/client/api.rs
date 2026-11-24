@@ -5,6 +5,7 @@ use governor::{
     clock::DefaultClock,
     state::{InMemoryState, NotKeyed},
 };
+use log::info;
 use moka::sync::Cache;
 use reqwest::Client;
 use scraper::{Html, Selector};

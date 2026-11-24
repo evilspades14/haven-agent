@@ -12,20 +12,12 @@ import {
   SmileyXEyesIcon,
   UserIcon,
 } from "@phosphor-icons/react";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "./ui/accordion";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "./ui/sheet";
-import { ToggleGroup, ToggleGroupItem } from "./ui/toggle-group";
 import {
   ResolutionField,
   ResolutionFieldClear,
   ResolutionFieldHeight,
   ResolutionFieldInputs,
-  ResolutionFieldLabel,
   ResolutionFieldLock,
   ResolutionFieldOrientation,
   ResolutionFieldPresets,
@@ -33,24 +25,9 @@ import {
   ResolutionFieldReadout,
   ResolutionFieldWidth,
 } from "./experimental/resolution-field";
-import {
-  Field,
-  FieldContent,
-  FieldDescription,
-  FieldGroup,
-  FieldLabel,
-  FieldTitle,
-} from "./ui/field";
-import { useState } from "react";
-import { SearchParameters } from "@/types/core/SearchParameters";
+import { Field, FieldGroup } from "./ui/field";
 import { useStoreValue } from "@/hooks/use-settings";
-import { SearchParametersCategories } from "@/types/core/SearchParametersCategories";
-import {
-  categoryValuestoCategoryParam,
-  objParamToArray,
-} from "./search-filter-sheet.utils";
 import useWallhavenClientParamsStore from "@/hooks/wallhaven-params";
-import { SearchParametersPurities } from "@/types/core/SearchParametersPurities";
 import WallpaperColorBar from "./wallpaper-color-bar";
 import {
   Collapsible,
@@ -62,7 +39,6 @@ import {
   Item,
   ItemActions,
   ItemContent,
-  ItemDescription,
   ItemMedia,
   ItemTitle,
 } from "./ui/item";
@@ -267,9 +243,7 @@ function SearchFilterSheet({ open, onOpenChange }: SearchFilterSheetProps) {
               <CollapsibleContent>
                 <WallpaperColorBar
                   value={params.colors ?? undefined}
-                  onValueChange={(value) =>
-                    value.length > 0 && updateParams({ colors: value })
-                  }
+                  onValueChange={(value) => updateParams({ colors: value })}
                   mode="edit"
                 />
               </CollapsibleContent>

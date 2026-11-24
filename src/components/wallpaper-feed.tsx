@@ -80,7 +80,9 @@ function WallpaperFeed({ columns = 3, ...props }: WallpaperFeedProps) {
           ))}
         </div>
 
-        <div ref={sentinelRef} className="h-1" />
+        {data && data.pages.length > 0 && (
+          <div ref={sentinelRef} className="h-1" />
+        )}
 
         <AnimatePresence>
           {isFetchingNextPage && (
