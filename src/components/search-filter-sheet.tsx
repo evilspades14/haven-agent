@@ -114,6 +114,7 @@ function SearchFilterSheet({ open, onOpenChange }: SearchFilterSheetProps) {
     "apiKey",
     undefined,
   );
+  console.log(params);
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent className="overflow-y-auto">
@@ -171,8 +172,8 @@ function SearchFilterSheet({ open, onOpenChange }: SearchFilterSheetProps) {
                 </Button>
               </CollapsibleTrigger>
               <CollapsibleContent className="flex flex-col gap-1">
-                {SEARCH_CATEGORIES.map((cat) => (
-                  <Item variant={"muted"}>
+                {SEARCH_CATEGORIES.map((cat, idx) => (
+                  <Item variant={"muted"} key={`category-${idx}`}>
                     <ItemMedia>
                       <cat.icon />
                     </ItemMedia>
@@ -218,8 +219,8 @@ function SearchFilterSheet({ open, onOpenChange }: SearchFilterSheetProps) {
                 </Button>
               </CollapsibleTrigger>
               <CollapsibleContent className="flex flex-col gap-1">
-                {SEARCH_PURITIES.map((cat) => (
-                  <Item variant={"muted"}>
+                {SEARCH_PURITIES.map((cat, idx) => (
+                  <Item variant={"muted"} key={`purity-${idx}`}>
                     <ItemMedia>
                       <cat.icon />
                     </ItemMedia>
@@ -266,6 +267,9 @@ function SearchFilterSheet({ open, onOpenChange }: SearchFilterSheetProps) {
               <CollapsibleContent>
                 <WallpaperColorBar
                   value={params.colors ?? undefined}
+                  onValueChange={(value) =>
+                    value.length > 0 && updateParams({ colors: value })
+                  }
                   mode="edit"
                 />
               </CollapsibleContent>
@@ -362,7 +366,7 @@ function SearchFilterSheet({ open, onOpenChange }: SearchFilterSheetProps) {
                 onChange={(value) => updateParams({ atleast: value })}
                 className="mt-2"
               >
-                <ResolutionFieldOrientation/>
+                <ResolutionFieldOrientation />
                 <ResolutionFieldPresets
                   className="grid grid-cols-2"
                   presets={[
@@ -381,11 +385,10 @@ function SearchFilterSheet({ open, onOpenChange }: SearchFilterSheetProps) {
                 <ResolutionFieldReadout
                   format={(v) => (v ? `${v.width}×${v.height}+` : "No limit")}
                 />
-                <ResolutionFieldClear/>
+                <ResolutionFieldClear />
               </ResolutionField>
             </CollapsibleContent>
           </Collapsible>
-          
         </FieldGroup>
       </SheetContent>
     </Sheet>
