@@ -1,4 +1,3 @@
-import { SearchParametersColor } from "@/types/core/SearchParametersColor";
 
 export function categoryValuestoCategoryParam<T extends Record<string, boolean>>(
   values: Array<keyof T>,

@@ -86,7 +86,7 @@ function SearchFilterSheet({ open, onOpenChange }: SearchFilterSheetProps) {
   const updateParams = useWallhavenClientParamsStore(
     (state) => state.updateParams,
   );
-  const [apiKey, _updateApiKey] = useStoreValue<string | undefined>(
+  const [_apiKey, _updateApiKey] = useStoreValue<string | undefined>(
     "apiKey",
     undefined,
   );

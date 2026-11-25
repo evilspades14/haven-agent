@@ -1,21 +1,12 @@
-import { ResolutionField } from "@/components/experimental/resolution-field";
 import SearchFilterSheet from "@/components/search-filter-sheet";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
+import { Field } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -24,31 +15,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-} from "@/components/ui/sheet";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { WallpaperCardDetail } from "@/components/wallpaper-detail";
 import WallpaperFeed from "@/components/wallpaper-feed";
 import { useMediaQuery } from "@/hooks/media-query";
 import { useStoreValue } from "@/hooks/use-settings";
 import useWallhavenClientParamsStore from "@/hooks/wallhaven-params";
-import { SearchParametersCategories } from "@/types/core/SearchParametersCategories";
-import { SearchParametersPurities } from "@/types/core/SearchParametersPurities";
 import { SearchParametersSort } from "@/types/core/SearchParametersSort";
 import { SearchParametersTopRange } from "@/types/core/SearchParametersTopRange";
 import { Wallpaper } from "@/types/core/Wallpaper";
 import {
-  CubeIcon,
-  HandPeaceIcon,
-  SmileyIcon,
-  SmileyMeltingIcon,
-  SmileyXEyesIcon,
   SortAscendingIcon,
-  UserIcon,
 } from "@phosphor-icons/react";
 import { CheckCircleIcon } from "@phosphor-icons/react/dist/ssr";
 import { createFileRoute } from "@tanstack/react-router";
@@ -64,7 +40,7 @@ function RouteComponent() {
   const updateParams = useWallhavenClientParamsStore(
     (state) => state.updateParams,
   );
-  const [apiKey, _updateApiKey] = useStoreValue<string | undefined>(
+  const [_apiKey, _updateApiKey] = useStoreValue<string | undefined>(
     "apiKey",
     undefined,
   );
