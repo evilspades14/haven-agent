@@ -28,14 +28,9 @@ function WallpaperColorBar({
       mode: "edit";
     }) {
   const copy = async (color: string) =>
-    toast.promise(
-      async () => {
-        await navigator.clipboard.writeText(color);
-      },
-      {
-        success: () => "Coped to clipboard.",
-      },
-    );
+    toast.promise(async () => await navigator.clipboard.writeText(color), {
+      success: () => "Coped to clipboard.",
+    });
   const [selectedColors, setSelectedColors] = useState<(string | null)[]>([
     null,
     null,

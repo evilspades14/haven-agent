@@ -12,7 +12,6 @@ import {
   SmileyXEyesIcon,
   UserIcon,
 } from "@phosphor-icons/react";
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from "./ui/sheet";
 import {
   ResolutionField,
   ResolutionFieldClear,
@@ -55,6 +54,7 @@ import {
   defaultSearchParametersCategories,
   defaultSearchParametersPurities,
 } from "@/types/default/defaultSearchParameters";
+import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "./ui/drawer";
 
 type SearchFilterSheetProps = {
   open: boolean;
@@ -92,11 +92,11 @@ function SearchFilterSheet({ open, onOpenChange }: SearchFilterSheetProps) {
   );
   console.log(params);
   return (
-    <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent className="overflow-y-auto">
-        <SheetHeader>
-          <SheetTitle>Search Options</SheetTitle>
-        </SheetHeader>
+    <Drawer open={open} onOpenChange={onOpenChange}>
+      <DrawerContent className="overflow-y-auto">
+        <DrawerHeader>
+          <DrawerTitle>Search Options</DrawerTitle>
+        </DrawerHeader>
 
         {/*<Accordion
           value={selectedFilter}
@@ -364,8 +364,8 @@ function SearchFilterSheet({ open, onOpenChange }: SearchFilterSheetProps) {
             </CollapsibleContent>
           </Collapsible>
         </FieldGroup>
-      </SheetContent>
-    </Sheet>
+      </DrawerContent>
+    </Drawer>
   );
 }
 
